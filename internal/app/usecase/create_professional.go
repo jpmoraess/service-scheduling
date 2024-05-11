@@ -9,51 +9,43 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type Signup struct {
+type CreateProfessional struct {
 	accountRepository       repository.AccountRepository
 	professionalRepository  repository.ProfessionalRepository
 	establishmentRepository repository.EstablishmentRepository
 }
 
-func NewSignup(
+func NewCreateProfessional(
 	accountRepository repository.AccountRepository,
 	professionalRepository repository.ProfessionalRepository,
 	establishmentRepository repository.EstablishmentRepository,
-) *Signup {
-	return &Signup{
+) *CreateProfessional {
+	return &CreateProfessional{
 		accountRepository:       accountRepository,
 		professionalRepository:  professionalRepository,
 		establishmentRepository: establishmentRepository,
 	}
 }
 
-func (a *Signup) Execute(ctx context.Context, input dto.SignupInput) error {
-	// TODO: validate duplicated e-mail, phone and slug (2PC)
+func (c *CreateProfessional) Execute(ctx context.Context, input dto.CreateProfessionalInput) error {
+	// TODO: validate existence of establishment
 	encpw, err := bcrypt.GenerateFromPassword([]byte(input.Password), 12)
 	if err != nil {
 		return err
 	}
-	account, err := entity.NewAccount(entity.OwnerType, input.Name, input.Email, input.PhoneNumber, string(encpw))
+	account, err := entity.NewAccount(entity.ProfessionalType, input.Name, input.Email, input.PhoneNumber, string(encpw))
 	if err != nil {
 		return err
 	}
-	savedAccount, err := a.accountRepository.Save(ctx, account)
+	savedAccount, err := c.accountRepository.Save(ctx, account)
 	if err != nil {
 		return err
 	}
-	establishment, err := entity.NewEstablishment(savedAccount.ID, input.EstablishmentName, "slug")
+	professional, err := entity.NewProfessional(savedAccount.ID, input.EstablishmentID, input.Name)
 	if err != nil {
 		return err
 	}
-	savedEstablishment, err := a.establishmentRepository.Save(ctx, establishment)
-	if err != nil {
-		return err
-	}
-	professional, err := entity.NewProfessional(savedAccount.ID, savedEstablishment.ID, input.Name)
-	if err != nil {
-		return err
-	}
-	_, err = a.professionalRepository.Save(ctx, professional)
+	_, err = c.professionalRepository.Save(ctx, professional)
 	if err != nil {
 		return err
 	}

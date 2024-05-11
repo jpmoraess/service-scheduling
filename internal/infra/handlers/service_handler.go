@@ -26,7 +26,7 @@ func (h *ServiceHandler) HandleCreateService(c *fiber.Ctx) error {
 	if err := h.createService.Execute(c.Context(), input); err != nil {
 		return err
 	}
-	return c.JSON("service created successfully")
+	return c.Status(201).JSON("service created successfully")
 }
 
 func (h *ServiceHandler) HandleFindServicesByEstablishment(c *fiber.Ctx) error {

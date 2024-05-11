@@ -27,17 +27,20 @@ func main() {
 		// repositores initialization
 		accountRepository       = persistence.NewAccountMongoRepository(client)
 		serviceRepository       = persistence.NewServiceMongoRepository(client)
+		professionalRepository  = persistence.NewProfessionalMongoRepository(client)
 		establishmentRepository = persistence.NewEstablishmentMongoRepository(client)
 
 		// usecases initialization
-		accountSignup = usecase.NewSignup(accountRepository, establishmentRepository)
-		accountSignin = usecase.NewAccountSignin(accountRepository)
-		createService = usecase.NewCreateService(serviceRepository)
-		findServices  = usecase.NewFindServices(serviceRepository)
+		accountSignup      = usecase.NewSignup(accountRepository, professionalRepository, establishmentRepository)
+		accountSignin      = usecase.NewAccountSignin(accountRepository)
+		createService      = usecase.NewCreateService(serviceRepository)
+		findServices       = usecase.NewFindServices(serviceRepository)
+		createProfessional = usecase.NewCreateProfessional(accountRepository, professionalRepository, establishmentRepository)
 
 		// handlers initialization
-		authHandler    = handlers.NewAuthHandler(*accountSignup, *accountSignin)
-		serviceHandler = handlers.NewServiceHandler(*createService, *findServices)
+		authHandler         = handlers.NewAuthHandler(*accountSignup, *accountSignin)
+		serviceHandler      = handlers.NewServiceHandler(*createService, *findServices)
+		professionalHandler = handlers.NewProfessionalHandler(*createProfessional)
 
 		// http server initialization
 		app  = fiber.New()
@@ -51,6 +54,8 @@ func main() {
 
 	api.Post("/service", serviceHandler.HandleCreateService)
 	api.Get("/service", serviceHandler.HandleFindServicesByEstablishment)
+
+	api.Post("/professional", professionalHandler.HandleCreateProfessional)
 
 	app.Listen(*listenAddr)
 }

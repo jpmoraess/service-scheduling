@@ -26,10 +26,10 @@ func (c *CreateService) Execute(ctx context.Context, input dto.CreateServiceInpu
 	if err != nil {
 		return err
 	}
-	savedService, err := c.serviceRepository.Save(ctx, service)
+	service, err = c.serviceRepository.Save(ctx, service)
 	if err != nil {
 		return err
 	}
-	fmt.Printf("service created successfully: %+v\n", savedService)
+	fmt.Printf("service created successfully: %+v\n", service)
 	return nil
 }

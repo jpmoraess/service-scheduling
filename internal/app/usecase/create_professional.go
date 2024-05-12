@@ -40,15 +40,15 @@ func (c *CreateProfessional) Execute(ctx context.Context, input dto.CreateProfes
 	if err != nil {
 		return err
 	}
-	savedAccount, err := c.accountRepository.Save(ctx, account)
+	account, err = c.accountRepository.Save(ctx, account)
 	if err != nil {
 		return err
 	}
-	professional, err := entity.NewProfessional(savedAccount.ID, input.EstablishmentID, input.Name)
+	professional, err := entity.NewProfessional(account.ID, input.EstablishmentID, input.Name)
 	if err != nil {
 		return err
 	}
-	savedProfissional, err := c.professionalRepository.Save(ctx, professional)
+	professional, err = c.professionalRepository.Save(ctx, professional)
 	if err != nil {
 		return err
 	}
@@ -56,7 +56,7 @@ func (c *CreateProfessional) Execute(ctx context.Context, input dto.CreateProfes
 	if err != nil {
 		return err
 	}
-	workPlan.ProfessionalID = savedProfissional.ID
+	workPlan.ProfessionalID = professional.ID
 	_, err = c.workPlanRepository.Save(ctx, workPlan)
 	if err != nil {
 		return err

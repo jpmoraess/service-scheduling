@@ -40,23 +40,23 @@ func (a *Signup) Execute(ctx context.Context, input dto.SignupInput) error {
 	if err != nil {
 		return err
 	}
-	savedAccount, err := a.accountRepository.Save(ctx, account)
+	account, err = a.accountRepository.Save(ctx, account)
 	if err != nil {
 		return err
 	}
-	establishment, err := entity.NewEstablishment(savedAccount.ID, input.EstablishmentName, "slug")
+	establishment, err := entity.NewEstablishment(account.ID, input.EstablishmentName, "slug")
 	if err != nil {
 		return err
 	}
-	savedEstablishment, err := a.establishmentRepository.Save(ctx, establishment)
+	establishment, err = a.establishmentRepository.Save(ctx, establishment)
 	if err != nil {
 		return err
 	}
-	professional, err := entity.NewProfessional(savedAccount.ID, savedEstablishment.ID, input.Name)
+	professional, err := entity.NewProfessional(account.ID, establishment.ID, input.Name)
 	if err != nil {
 		return err
 	}
-	savedProfissional, err := a.professionalRepository.Save(ctx, professional)
+	professional, err = a.professionalRepository.Save(ctx, professional)
 	if err != nil {
 		return err
 	}
@@ -64,7 +64,7 @@ func (a *Signup) Execute(ctx context.Context, input dto.SignupInput) error {
 	if err != nil {
 		return err
 	}
-	workPlan.ProfessionalID = savedProfissional.ID
+	workPlan.ProfessionalID = professional.ID
 	_, err = a.workPlanRepository.Save(ctx, workPlan)
 	if err != nil {
 		return err

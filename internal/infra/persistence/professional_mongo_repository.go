@@ -5,6 +5,7 @@ import (
 
 	"github.com/jpmoraess/service-scheduling/configs"
 	"github.com/jpmoraess/service-scheduling/internal/domain/entity"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -28,4 +29,16 @@ func (p *ProfessionalMongoRepository) Save(ctx context.Context, entity *entity.P
 	}
 	entity.ID = res.InsertedID.(primitive.ObjectID).Hex()
 	return entity, nil
+}
+
+func (p *ProfessionalMongoRepository) Get(ctx context.Context, id string) (*entity.Professional, error) {
+	oid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, err
+	}
+	var professional entity.Professional
+	if err := p.coll.FindOne(ctx, bson.M{"_id": oid}).Decode(&professional); err != nil {
+		return nil, err
+	}
+	return &professional, nil
 }

@@ -13,20 +13,17 @@ type CreateProfessional struct {
 	accountRepository       repository.AccountRepository
 	professionalRepository  repository.ProfessionalRepository
 	establishmentRepository repository.EstablishmentRepository
-	workPlanRepository      repository.WorkPlanRepository
 }
 
 func NewCreateProfessional(
 	accountRepository repository.AccountRepository,
 	professionalRepository repository.ProfessionalRepository,
 	establishmentRepository repository.EstablishmentRepository,
-	workPlanRepository repository.WorkPlanRepository,
 ) *CreateProfessional {
 	return &CreateProfessional{
 		accountRepository:       accountRepository,
 		professionalRepository:  professionalRepository,
 		establishmentRepository: establishmentRepository,
-		workPlanRepository:      workPlanRepository,
 	}
 }
 
@@ -49,15 +46,6 @@ func (c *CreateProfessional) Execute(ctx context.Context, input dto.CreateProfes
 		return err
 	}
 	professional, err = c.professionalRepository.Save(ctx, professional)
-	if err != nil {
-		return err
-	}
-	workPlan, err := entity.DefaultWorkPlan()
-	if err != nil {
-		return err
-	}
-	workPlan.ProfessionalID = professional.ID
-	_, err = c.workPlanRepository.Save(ctx, workPlan)
 	if err != nil {
 		return err
 	}

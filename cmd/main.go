@@ -29,13 +29,14 @@ func main() {
 		serviceRepository       = persistence.NewServiceMongoRepository(client)
 		professionalRepository  = persistence.NewProfessionalMongoRepository(client)
 		establishmentRepository = persistence.NewEstablishmentMongoRepository(client)
+		workPlanRepository      = persistence.NewWorkPlanMongoRepository(client)
 
 		// usecases initialization
-		signup             = usecase.NewSignup(accountRepository, professionalRepository, establishmentRepository)
+		signup             = usecase.NewSignup(accountRepository, professionalRepository, establishmentRepository, workPlanRepository)
 		signin             = usecase.NewSignin(accountRepository)
 		createService      = usecase.NewCreateService(serviceRepository)
 		findServices       = usecase.NewListServices(serviceRepository)
-		createProfessional = usecase.NewCreateProfessional(accountRepository, professionalRepository, establishmentRepository)
+		createProfessional = usecase.NewCreateProfessional(accountRepository, professionalRepository, establishmentRepository, workPlanRepository)
 
 		// handlers initialization
 		authHandler         = handlers.NewAuthHandler(*signup, *signin)

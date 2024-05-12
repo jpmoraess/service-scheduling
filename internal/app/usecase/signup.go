@@ -13,17 +13,20 @@ type Signup struct {
 	accountRepository       repository.AccountRepository
 	professionalRepository  repository.ProfessionalRepository
 	establishmentRepository repository.EstablishmentRepository
+	workPlanRepository      repository.WorkPlanRepository
 }
 
 func NewSignup(
 	accountRepository repository.AccountRepository,
 	professionalRepository repository.ProfessionalRepository,
 	establishmentRepository repository.EstablishmentRepository,
+	workPlanRepository repository.WorkPlanRepository,
 ) *Signup {
 	return &Signup{
 		accountRepository:       accountRepository,
 		professionalRepository:  professionalRepository,
 		establishmentRepository: establishmentRepository,
+		workPlanRepository:      workPlanRepository,
 	}
 }
 
@@ -53,7 +56,16 @@ func (a *Signup) Execute(ctx context.Context, input dto.SignupInput) error {
 	if err != nil {
 		return err
 	}
-	_, err = a.professionalRepository.Save(ctx, professional)
+	savedProfissional, err := a.professionalRepository.Save(ctx, professional)
+	if err != nil {
+		return err
+	}
+	workPlan, err := entity.DefaultWorkPlan()
+	if err != nil {
+		return err
+	}
+	workPlan.ProfessionalID = savedProfissional.ID
+	_, err = a.workPlanRepository.Save(ctx, workPlan)
 	if err != nil {
 		return err
 	}

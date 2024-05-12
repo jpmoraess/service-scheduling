@@ -13,17 +13,17 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type AccountSignin struct {
+type Signin struct {
 	accountRepository repository.AccountRepository
 }
 
-func NewAccountSignin(accountRepository repository.AccountRepository) *AccountSignin {
-	return &AccountSignin{
+func NewSignin(accountRepository repository.AccountRepository) *Signin {
+	return &Signin{
 		accountRepository: accountRepository,
 	}
 }
 
-func (a *AccountSignin) Execute(ctx context.Context, input dto.AccountSigninInput) (*dto.AccountSigninOutput, error) {
+func (a *Signin) Execute(ctx context.Context, input dto.SigninInput) (*dto.SigninOutput, error) {
 	account, err := a.accountRepository.GetAccountByEmail(ctx, input.Email)
 	if err != nil {
 		return nil, err
@@ -32,7 +32,7 @@ func (a *AccountSignin) Execute(ctx context.Context, input dto.AccountSigninInpu
 		return nil, fmt.Errorf("invalid credentials")
 	}
 	accessToken := createAccessTokenFromAccount(account)
-	return &dto.AccountSigninOutput{
+	return &dto.SigninOutput{
 		AccessToken: accessToken,
 	}, nil
 }

@@ -24,5 +24,5 @@ func (h *ProfessionalHandler) HandleCreateProfessional(c *fiber.Ctx) error {
 	if err := h.createProfessional.Execute(c.Context(), input); err != nil {
 		return err
 	}
-	return c.Status(201).JSON("professional created successfully")
+	return c.Status(fiber.StatusCreated).JSON("professional created successfully")
 }

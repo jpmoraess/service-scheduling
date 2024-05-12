@@ -7,14 +7,14 @@ import (
 )
 
 type AuthHandler struct {
-	signup        usecase.Signup
-	accountSignin usecase.AccountSignin
+	signup usecase.Signup
+	signin usecase.Signin
 }
 
-func NewAuthHandler(signup usecase.Signup, accountSignin usecase.AccountSignin) *AuthHandler {
+func NewAuthHandler(signup usecase.Signup, signin usecase.Signin) *AuthHandler {
 	return &AuthHandler{
-		signup:        signup,
-		accountSignin: accountSignin,
+		signup: signup,
+		signin: signin,
 	}
 }
 
@@ -26,15 +26,15 @@ func (h *AuthHandler) HandleSignup(c *fiber.Ctx) error {
 	if err := h.signup.Execute(c.Context(), input); err != nil {
 		return err
 	}
-	return c.JSON("signup successfully")
+	return c.Status(fiber.StatusCreated).JSON("signup successfully")
 }
 
 func (h *AuthHandler) HandleSignin(c *fiber.Ctx) error {
-	var input dto.AccountSigninInput
+	var input dto.SigninInput
 	if err := c.BodyParser(&input); err != nil {
 		return err
 	}
-	output, err := h.accountSignin.Execute(c.Context(), input)
+	output, err := h.signin.Execute(c.Context(), input)
 	if err != nil {
 		return err
 	}

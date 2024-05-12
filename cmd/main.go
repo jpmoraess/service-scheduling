@@ -31,14 +31,14 @@ func main() {
 		establishmentRepository = persistence.NewEstablishmentMongoRepository(client)
 
 		// usecases initialization
-		accountSignup      = usecase.NewSignup(accountRepository, professionalRepository, establishmentRepository)
-		accountSignin      = usecase.NewAccountSignin(accountRepository)
+		signup             = usecase.NewSignup(accountRepository, professionalRepository, establishmentRepository)
+		signin             = usecase.NewSignin(accountRepository)
 		createService      = usecase.NewCreateService(serviceRepository)
-		findServices       = usecase.NewFindServices(serviceRepository)
+		findServices       = usecase.NewListServices(serviceRepository)
 		createProfessional = usecase.NewCreateProfessional(accountRepository, professionalRepository, establishmentRepository)
 
 		// handlers initialization
-		authHandler         = handlers.NewAuthHandler(*accountSignup, *accountSignin)
+		authHandler         = handlers.NewAuthHandler(*signup, *signin)
 		serviceHandler      = handlers.NewServiceHandler(*createService, *findServices)
 		professionalHandler = handlers.NewProfessionalHandler(*createProfessional)
 
@@ -53,7 +53,7 @@ func main() {
 	auth.Post("/signin", authHandler.HandleSignin)
 
 	api.Post("/service", serviceHandler.HandleCreateService)
-	api.Get("/service", serviceHandler.HandleFindServicesByEstablishment)
+	api.Get("/service", serviceHandler.HandleListServicesByEstablishment)
 
 	api.Post("/professional", professionalHandler.HandleCreateProfessional)
 

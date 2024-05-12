@@ -1,12 +1,10 @@
 package dto
 
-// ACCOUNT SIGNIN
-
-type AccountSigninInput struct {
+type SigninInput struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
-type AccountSigninOutput struct {
+type SigninOutput struct {
 	AccessToken string `json:"accessToken"`
 }

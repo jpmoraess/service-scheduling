@@ -7,11 +7,11 @@ import (
 )
 
 type ServiceHandler struct {
-	createService usecase.CreateService
-	listServices  usecase.ListServices
+	createService *usecase.CreateService
+	listServices  *usecase.ListServices
 }
 
-func NewServiceHandler(createService usecase.CreateService, listServices usecase.ListServices) *ServiceHandler {
+func NewServiceHandler(createService *usecase.CreateService, listServices *usecase.ListServices) *ServiceHandler {
 	return &ServiceHandler{
 		createService: createService,
 		listServices:  listServices,

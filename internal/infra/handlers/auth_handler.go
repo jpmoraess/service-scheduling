@@ -7,11 +7,11 @@ import (
 )
 
 type AuthHandler struct {
-	signup usecase.Signup
-	signin usecase.Signin
+	signup *usecase.Signup
+	signin *usecase.Signin
 }
 
-func NewAuthHandler(signup usecase.Signup, signin usecase.Signin) *AuthHandler {
+func NewAuthHandler(signup *usecase.Signup, signin *usecase.Signin) *AuthHandler {
 	return &AuthHandler{
 		signup: signup,
 		signin: signin,

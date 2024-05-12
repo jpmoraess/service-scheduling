@@ -7,10 +7,10 @@ import (
 )
 
 type ProfessionalHandler struct {
-	createProfessional usecase.CreateProfessional
+	createProfessional *usecase.CreateProfessional
 }
 
-func NewProfessionalHandler(createProfessional usecase.CreateProfessional) *ProfessionalHandler {
+func NewProfessionalHandler(createProfessional *usecase.CreateProfessional) *ProfessionalHandler {
 	return &ProfessionalHandler{
 		createProfessional: createProfessional,
 	}

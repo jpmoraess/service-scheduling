@@ -39,9 +39,9 @@ func main() {
 		createProfessional = usecase.NewCreateProfessional(accountRepository, professionalRepository, establishmentRepository, workPlanRepository)
 
 		// handlers initialization
-		authHandler         = handlers.NewAuthHandler(*signup, *signin)
-		serviceHandler      = handlers.NewServiceHandler(*createService, *findServices)
-		professionalHandler = handlers.NewProfessionalHandler(*createProfessional)
+		authHandler         = handlers.NewAuthHandler(signup, signin)
+		serviceHandler      = handlers.NewServiceHandler(createService, findServices)
+		professionalHandler = handlers.NewProfessionalHandler(createProfessional)
 
 		// http server initialization
 		app  = fiber.New()

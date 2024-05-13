@@ -1,7 +1,6 @@
 package dto
 
 type CreateServiceInput struct {
-	EstablishmentID   string  `json:"establishmentID"`
 	Name              string  `json:"name"`
 	Description       string  `json:"description"`
 	Price             float64 `json:"price"`

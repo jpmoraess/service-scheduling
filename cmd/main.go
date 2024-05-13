@@ -33,7 +33,7 @@ func main() {
 		// usecases initialization
 		signup             = usecase.NewSignup(accountRepository, professionalRepository, establishmentRepository)
 		signin             = usecase.NewSignin(accountRepository)
-		createService      = usecase.NewCreateService(serviceRepository)
+		createService      = usecase.NewCreateService(serviceRepository, establishmentRepository)
 		findServices       = usecase.NewListServices(serviceRepository)
 		createProfessional = usecase.NewCreateProfessional(accountRepository, professionalRepository, establishmentRepository)
 		getProfessional    = usecase.NewGetProfessional(professionalRepository)
@@ -46,7 +46,7 @@ func main() {
 		// http server initialization
 		app  = fiber.New()
 		auth = app.Group("/auth")
-		api  = app.Group("/api/v1", middleware.JWTAuth)
+		api  = app.Group("/api/v1", middleware.JWTAuth(accountRepository))
 	)
 
 	// auth

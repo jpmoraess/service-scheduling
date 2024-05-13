@@ -31,6 +31,18 @@ func (a *AccountMongoRepository) Save(ctx context.Context, entity *entity.Accoun
 	return entity, nil
 }
 
+func (a *AccountMongoRepository) GetAccountByID(ctx context.Context, id string) (*entity.Account, error) {
+	oid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, err
+	}
+	var account entity.Account
+	if err := a.coll.FindOne(ctx, bson.M{"_id": oid}).Decode(&account); err != nil {
+		return nil, err
+	}
+	return &account, nil
+}
+
 func (a *AccountMongoRepository) GetAccountByEmail(ctx context.Context, email string) (*entity.Account, error) {
 	var account entity.Account
 	if err := a.coll.FindOne(ctx, bson.M{"email": email}).Decode(&account); err != nil {

@@ -7,25 +7,35 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/jpmoraess/service-scheduling/internal/app/repository"
 )
 
-func JWTAuth(c *fiber.Ctx) error {
-	token := c.Get("Authorization")
-	if len(token) == 0 {
-		return fmt.Errorf("unauthorized")
+func JWTAuth(accountRepository repository.AccountRepository) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		token := c.Get("Authorization")
+		if len(token) == 0 {
+			return fmt.Errorf("unauthorized")
+		}
+		claims, err := validateJWTToken(token)
+		if err != nil {
+			return err
+		}
+		expires, err := claims.GetExpirationTime()
+		if err != nil {
+			return err
+		}
+		if time.Now().After(expires.Time) {
+			return fmt.Errorf("token expired")
+		}
+		// set the current authenticated account to the context
+		accountID := claims["id"].(string)
+		account, err := accountRepository.GetAccountByID(c.Context(), accountID)
+		if err != nil {
+			return fmt.Errorf("unauthorized")
+		}
+		c.Context().SetUserValue("account", account)
+		return c.Next()
 	}
-	claims, err := validateJWTToken(token)
-	if err != nil {
-		return err
-	}
-	expires, err := claims.GetExpirationTime()
-	if err != nil {
-		return err
-	}
-	if time.Now().After(expires.Time) {
-		return fmt.Errorf("token expired")
-	}
-	return c.Next()
 }
 
 func validateJWTToken(tokenStr string) (jwt.MapClaims, error) {

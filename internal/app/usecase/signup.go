@@ -33,27 +33,33 @@ func (a *Signup) Execute(ctx context.Context, input dto.SignupInput) error {
 	if err != nil {
 		return err
 	}
+
 	account, err := entity.NewAccount(entity.OwnerType, input.Name, input.Email, input.PhoneNumber, string(encpw))
 	if err != nil {
 		return err
 	}
+
 	account, err = a.accountRepository.Save(ctx, account)
 	if err != nil {
 		return err
 	}
+
 	establishment, err := entity.NewEstablishment(account.ID, input.EstablishmentName, "slug")
 	if err != nil {
 		return err
 	}
+
 	establishment, err = a.establishmentRepository.Save(ctx, establishment)
 	if err != nil {
 		return err
 	}
+
 	professional, err := entity.NewProfessional(account.ID, establishment.ID, input.Name)
 	if err != nil {
 		return err
 	}
-	professional, err = a.professionalRepository.Save(ctx, professional)
+
+	_, err = a.professionalRepository.Save(ctx, professional)
 	if err != nil {
 		return err
 	}

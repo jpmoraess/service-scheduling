@@ -23,12 +23,12 @@ func NewCreateService(serviceRepository repository.ServiceRepository, establishm
 }
 
 func (c *CreateService) Execute(ctx context.Context, input dto.CreateServiceInput) error {
-	tokenData, ok := ctx.Value("account").(*entity.Account)
-	if !ok {
-		return fmt.Errorf("error") // TODO: treat error better
+	authData, err := getAuthData(ctx)
+	if err != nil {
+		return err
 	}
 
-	establishment, err := c.establishmentRepository.GetByAccountID(ctx, tokenData.ID)
+	establishment, err := c.establishmentRepository.GetByAccountID(ctx, authData.ID)
 	if err != nil {
 		return fmt.Errorf("establishment not found") // TODO: treat error better
 	}

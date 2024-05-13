@@ -6,6 +6,7 @@ import (
 	"github.com/jpmoraess/service-scheduling/internal/app/dto"
 	"github.com/jpmoraess/service-scheduling/internal/app/repository"
 	"github.com/jpmoraess/service-scheduling/internal/domain/entity"
+	"github.com/jpmoraess/service-scheduling/internal/domain/vo"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -34,7 +35,7 @@ func (a *Signup) Execute(ctx context.Context, input dto.SignupInput) error {
 		return err
 	}
 
-	account, err := entity.NewAccount(entity.OwnerType, input.Name, input.Email, input.PhoneNumber, string(encpw))
+	account, err := entity.NewAccount(vo.OwnerType, input.Name, input.Email, input.PhoneNumber, string(encpw))
 	if err != nil {
 		return err
 	}

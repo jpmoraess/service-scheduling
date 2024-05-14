@@ -6,7 +6,7 @@ import (
 
 var (
 	defaultStartTime = time.Date(0, 1, 1, 8, 30, 0, 0, time.UTC)
-	defaultEndTime   = time.Date(0, 1, 1, 8, 30, 0, 0, time.UTC)
+	defaultEndTime   = time.Date(0, 1, 1, 18, 30, 0, 0, time.UTC)
 )
 
 type WorkPlan struct {

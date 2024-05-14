@@ -28,7 +28,7 @@ func (a *Signin) Execute(ctx context.Context, input dto.SigninInput) (*dto.Signi
 	if err != nil {
 		return nil, err
 	}
-	if !isValidPassword(account.EncryptedPassword, input.Password) {
+	if !isValidPassword(account.GetEncryptedPassword(), input.Password) {
 		return nil, fmt.Errorf("invalid credentials")
 	}
 	accessToken := createAccessTokenFromAccount(account)
@@ -41,8 +41,8 @@ func createAccessTokenFromAccount(account *entity.Account) string {
 	now := time.Now()
 	expires := now.Add(time.Hour * 1)
 	claims := jwt.MapClaims{
-		"id":    account.ID,
-		"email": account.Email,
+		"id":    account.GetID(),
+		"email": account.GetEmail(),
 		"iat":   jwt.NewNumericDate(now),
 		"exp":   jwt.NewNumericDate(expires),
 	}

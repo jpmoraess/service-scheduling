@@ -27,7 +27,7 @@ func (e *EstablishmentMongoRepository) Save(ctx context.Context, entity *entity.
 	if err != nil {
 		return nil, err
 	}
-	entity.ID = res.InsertedID.(primitive.ObjectID).Hex()
+	entity.SetID(res.InsertedID.(primitive.ObjectID).Hex())
 	return entity, nil
 }
 
@@ -38,6 +38,14 @@ func (e *EstablishmentMongoRepository) Get(ctx context.Context, id string) (*ent
 	}
 	var establishment entity.Establishment
 	if err := e.coll.FindOne(ctx, bson.M{"_id": oid}).Decode(&establishment); err != nil {
+		return nil, err
+	}
+	return &establishment, nil
+}
+
+func (e *EstablishmentMongoRepository) GetBySlug(ctx context.Context, slug string) (*entity.Establishment, error) {
+	var establishment entity.Establishment
+	if err := e.coll.FindOne(ctx, bson.M{"slug": slug}).Decode(&establishment); err != nil {
 		return nil, err
 	}
 	return &establishment, nil

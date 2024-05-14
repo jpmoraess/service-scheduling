@@ -5,25 +5,35 @@ import (
 )
 
 type Scheduling struct {
-	ID              string    `bson:"_id,omitempty" json:"id,omitempty"`
-	ServiceID       string    `bson:"serviceID" json:"serviceID"`
-	CustomerID      string    `bson:"customerID" json:"customerID"`
-	ProfessionalID  string    `bson:"professionalID" json:"professionalID"`
-	EstablishmentID string    `bson:"establishmentID" json:"establishmentID"`
-	Date            time.Time `bson:"date" json:"date"`
-	Time            time.Time `bson:"time" json:"time"`
+	id              string    //`bson:"_id,omitempty" json:"id,omitempty"`
+	serviceID       string    //`bson:"serviceID" json:"serviceID"`
+	customerID      string    //`bson:"customerID" json:"customerID"`
+	professionalID  string    //`bson:"professionalID" json:"professionalID"`
+	establishmentID string    //`bson:"establishmentID" json:"establishmentID"`
+	date            time.Time //`bson:"date" json:"date"`
+	time            time.Time //`bson:"time" json:"time"`
+	createdAt       time.Time //`bson:"createdAt" json:"createdAt"`
 }
 
-func NewScheduling(service *Service, customer *Customer, professional *Professional, establishment *Establishment, date time.Time, time time.Time) (*Scheduling, error) {
-	if err := professional.CanScheduleAtTheSpecifiedDateAndTime(date, time); err != nil {
+func NewScheduling(service *Service, customer *Customer, professional *Professional, establishment *Establishment, dateDate time.Time, timeTime time.Time) (*Scheduling, error) {
+	if err := professional.CanScheduleAtTheSpecifiedDateAndTime(dateDate, timeTime); err != nil {
 		return nil, err
 	}
 	return &Scheduling{
-		ServiceID:       service.ID,
-		CustomerID:      customer.ID,
-		ProfessionalID:  professional.ID,
-		EstablishmentID: establishment.ID,
-		Date:            date,
-		Time:            time,
+		serviceID:       service.GetID(),
+		customerID:      customer.GetID(),
+		professionalID:  professional.GetID(),
+		establishmentID: establishment.GetID(),
+		date:            dateDate,
+		time:            timeTime,
+		createdAt:       time.Now(),
 	}, nil
+}
+
+func (a *Scheduling) SetID(id string) {
+	a.id = id
+}
+
+func (a *Scheduling) GetID() string {
+	return a.id
 }

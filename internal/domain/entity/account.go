@@ -7,22 +7,38 @@ import (
 )
 
 type Account struct {
-	ID                string         `bson:"_id,omitempty" json:"id,omitempty"`
-	AccountType       vo.AccountType `bson:"accountType" json:"accountType"`
-	Name              string         `bson:"name" json:"name"`
-	Email             string         `bson:"email" json:"email"`
-	PhoneNumber       string         `bson:"phoneNumber" json:"phoneNumber"`
-	EncryptedPassword string         `bson:"encryptedPassword" json:"-"`
-	CreatedAt         time.Time      `bson:"createdAt" json:"createdAt"`
+	id                string         //`bson:"_id,omitempty" json:"id,omitempty"`
+	accountType       vo.AccountType //`bson:"accountType" json:"accountType"`
+	name              string         //`bson:"name" json:"name"`
+	email             string         //`bson:"email" json:"email"`
+	phoneNumber       string         //`bson:"phoneNumber" json:"phoneNumber"`
+	encryptedPassword string         //`bson:"encryptedPassword" json:"-"`
+	createdAt         time.Time      //`bson:"createdAt" json:"createdAt"`
 }
 
 func NewAccount(accountType vo.AccountType, name, email, phoneNumber, encryptedPassword string) (*Account, error) {
 	return &Account{
-		AccountType:       accountType,
-		Name:              name,
-		Email:             email,
-		PhoneNumber:       phoneNumber,
-		EncryptedPassword: encryptedPassword,
-		CreatedAt:         time.Now(),
+		accountType:       accountType,
+		name:              name,
+		email:             email,
+		phoneNumber:       phoneNumber,
+		encryptedPassword: encryptedPassword,
+		createdAt:         time.Now(),
 	}, nil
+}
+
+func (a *Account) SetID(id string) {
+	a.id = id
+}
+
+func (a *Account) GetID() string {
+	return a.id
+}
+
+func (a *Account) GetEmail() string {
+	return a.email
+}
+
+func (a *Account) GetEncryptedPassword() string {
+	return a.encryptedPassword
 }

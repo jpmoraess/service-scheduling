@@ -35,7 +35,7 @@ func (c *CreateProfessional) Execute(ctx context.Context, input dto.CreateProfes
 		return err
 	}
 
-	establishment, err := c.establishmentRepository.GetByAccountID(ctx, authData.ID)
+	establishment, err := c.establishmentRepository.GetByAccountID(ctx, authData.GetID())
 	if err != nil {
 		return fmt.Errorf("establishment not found") // TODO: treat error better
 	}
@@ -55,7 +55,7 @@ func (c *CreateProfessional) Execute(ctx context.Context, input dto.CreateProfes
 		return err
 	}
 
-	professional, err := entity.NewProfessional(account.ID, establishment.ID, input.Name)
+	professional, err := entity.NewProfessional(account.GetID(), establishment.GetID(), input.Name)
 	if err != nil {
 		return err
 	}

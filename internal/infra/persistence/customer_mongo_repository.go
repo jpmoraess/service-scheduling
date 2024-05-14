@@ -27,7 +27,7 @@ func (c *CustomerMongoRepository) Save(ctx context.Context, entity *entity.Custo
 	if err != nil {
 		return nil, err
 	}
-	entity.ID = resp.InsertedID.(primitive.ObjectID).Hex()
+	entity.SetID(resp.InsertedID.(primitive.ObjectID).Hex())
 	return entity, nil
 }
 

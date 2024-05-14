@@ -8,13 +8,13 @@ import (
 )
 
 type Professional struct {
-	ID              string       `bson:"_id,omitempty" json:"id,omitempty"`
-	AccountID       string       `bson:"accountID" json:"accountID"`
-	EstablishmentID string       `bson:"establishmentID" json:"establishmentID"`
-	Name            string       `bson:"name" json:"name"`
-	WorkPlan        *vo.WorkPlan `bson:"workPlan" json:"workPlan"`
-	Active          bool         `bson:"active" json:"active"`
-	CreatedAt       time.Time
+	id              string       //`bson:"_id,omitempty" json:"id,omitempty"`
+	accountID       string       //`bson:"accountID" json:"accountID"`
+	establishmentID string       //`bson:"establishmentID" json:"establishmentID"`
+	name            string       //`bson:"name" json:"name"`
+	workPlan        *vo.WorkPlan //`bson:"workPlan" json:"workPlan"`
+	active          bool         //`bson:"active" json:"active"`
+	createdAt       time.Time    //`bson:"createdAt" json:"createdAt"`
 }
 
 func NewProfessional(accountID, establishmentID, name string) (*Professional, error) {
@@ -23,17 +23,17 @@ func NewProfessional(accountID, establishmentID, name string) (*Professional, er
 		return nil, err
 	}
 	return &Professional{
-		AccountID:       accountID,
-		EstablishmentID: establishmentID,
-		Name:            name,
-		WorkPlan:        workPlan,
-		Active:          true,
-		CreatedAt:       time.Now(),
+		accountID:       accountID,
+		establishmentID: establishmentID,
+		name:            name,
+		workPlan:        workPlan,
+		active:          true,
+		createdAt:       time.Now(),
 	}, nil
 }
 
 func (p *Professional) CanScheduleAtTheSpecifiedDateAndTime(date, time time.Time) error {
-	day := p.WorkPlan.GetDayFromWorkPlan(date)
+	day := p.GetWorkPlan().GetDayFromWorkPlan(date)
 	if day == nil {
 		return fmt.Errorf("professional does not work on the chosen day")
 	}
@@ -41,16 +41,40 @@ func (p *Professional) CanScheduleAtTheSpecifiedDateAndTime(date, time time.Time
 	// TODO: verify professional's break
 
 	// check if the time is within range
-	if day.StartTime.Before(day.EndTime) {
-		if (time.Equal(day.StartTime) || time.After(day.StartTime)) && (time.Equal(day.EndTime) || time.Before(day.EndTime)) {
+	if day.GetStartTime().Before(day.GetEndTime()) {
+		if (time.Equal(day.GetStartTime()) || time.After(day.GetStartTime())) && (time.Equal(day.GetEndTime()) || time.Before(day.GetEndTime())) {
 			return nil
 		}
 	} else {
 		// case where the interval crosses midnight
-		if time.Equal(day.StartTime) || time.After(day.StartTime) || time.Equal(day.EndTime) || time.Before(day.EndTime) {
+		if time.Equal(day.GetStartTime()) || time.After(day.GetStartTime()) || time.Equal(day.GetEndTime()) || time.Before(day.GetEndTime()) {
 			return nil
 		}
 	}
 
 	return fmt.Errorf("hours outside the professional's scheduling range")
+}
+
+func (a *Professional) SetID(id string) {
+	a.id = id
+}
+
+func (a *Professional) GetID() string {
+	return a.id
+}
+
+func (p *Professional) GetAccountID() string {
+	return p.accountID
+}
+
+func (p *Professional) GetEstablishmentID() string {
+	return p.establishmentID
+}
+
+func (p *Professional) GetName() string {
+	return p.name
+}
+
+func (p *Professional) GetWorkPlan() *vo.WorkPlan {
+	return p.workPlan
 }

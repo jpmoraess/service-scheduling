@@ -10,24 +10,24 @@ var (
 )
 
 type WorkPlan struct {
-	Monday    *Day `bson:"monday" json:"monday"`
-	Tuesday   *Day `bson:"tuesday" json:"tuesday"`
-	Wednesday *Day `bson:"wednesday" json:"wednesday"`
-	Thursday  *Day `bson:"thursday" json:"thursday"`
-	Friday    *Day `bson:"friday" json:"friday"`
-	Saturday  *Day `bson:"saturday" json:"saturday"`
-	Sunday    *Day `bson:"sunday" json:"sunday"`
+	monday    *Day //`bson:"monday" json:"monday"`
+	tuesday   *Day //`bson:"tuesday" json:"tuesday"`
+	wednesday *Day //`bson:"wednesday" json:"wednesday"`
+	thursday  *Day //`bson:"thursday" json:"thursday"`
+	friday    *Day //`bson:"friday" json:"friday"`
+	saturday  *Day //`bson:"saturday" json:"saturday"`
+	sunday    *Day //`bson:"sunday" json:"sunday"`
 }
 
 func NewWorkPlan(monday, tuesday, wednesday, thursday, friday, saturday, sunday *Day) (*WorkPlan, error) {
 	return &WorkPlan{
-		Monday:    monday,
-		Tuesday:   tuesday,
-		Wednesday: wednesday,
-		Thursday:  thursday,
-		Friday:    friday,
-		Saturday:  saturday,
-		Sunday:    sunday,
+		monday:    monday,
+		tuesday:   tuesday,
+		wednesday: wednesday,
+		thursday:  thursday,
+		friday:    friday,
+		saturday:  saturday,
+		sunday:    sunday,
 	}, nil
 }
 
@@ -37,12 +37,12 @@ func DefaultWorkPlan() (*WorkPlan, error) {
 		return nil, err
 	}
 	return &WorkPlan{
-		Monday:    day,
-		Tuesday:   day,
-		Wednesday: day,
-		Thursday:  day,
-		Friday:    day,
-		Saturday:  day,
+		monday:    day,
+		tuesday:   day,
+		wednesday: day,
+		thursday:  day,
+		friday:    day,
+		saturday:  day,
 	}, nil
 }
 
@@ -50,19 +50,19 @@ func (w *WorkPlan) GetDayFromWorkPlan(t time.Time) *Day {
 	weekday := t.Weekday()
 	switch weekday {
 	case time.Monday:
-		return w.Monday
+		return w.monday
 	case time.Tuesday:
-		return w.Tuesday
+		return w.tuesday
 	case time.Wednesday:
-		return w.Wednesday
+		return w.wednesday
 	case time.Thursday:
-		return w.Thursday
+		return w.thursday
 	case time.Friday:
-		return w.Friday
+		return w.friday
 	case time.Saturday:
-		return w.Saturday
+		return w.saturday
 	case time.Sunday:
-		return w.Sunday
+		return w.sunday
 	default:
 		return nil
 	}

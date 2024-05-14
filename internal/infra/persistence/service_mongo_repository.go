@@ -31,6 +31,18 @@ func (s *ServiceMongoRepository) Save(ctx context.Context, entity *entity.Servic
 	return entity, nil
 }
 
+func (s *ServiceMongoRepository) Get(ctx context.Context, id string) (*entity.Service, error) {
+	oid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, err
+	}
+	var service entity.Service
+	if err := s.coll.FindOne(ctx, bson.M{"_id": oid}).Decode(&service); err != nil {
+		return nil, err
+	}
+	return &service, nil
+}
+
 func (s *ServiceMongoRepository) FindByEstablishmentID(ctx context.Context, establishmentID string) ([]*entity.Service, error) {
 	resp, err := s.coll.Find(ctx, bson.M{"establishmentID": establishmentID})
 	if err != nil {

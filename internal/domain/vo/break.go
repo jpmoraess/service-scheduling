@@ -3,14 +3,14 @@ package vo
 import "time"
 
 type Break struct {
-	Start time.Time `bson:"start" json:"start"`
-	End   time.Time `bson:"end" json:"end"`
+	StartTime time.Time `bson:"startTime" json:"startTime"`
+	EndTime   time.Time `bson:"endTime" json:"endTime"`
 }
 
-func NewBreak(start, end time.Time) (*Break, error) {
+func NewBreak(startTime, endTime time.Time) (*Break, error) {
 	// apply some validations
 	return &Break{
-		Start: start,
-		End:   end,
+		StartTime: startTime,
+		EndTime:   endTime,
 	}, nil
 }

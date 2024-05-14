@@ -4,6 +4,11 @@ import (
 	"time"
 )
 
+var (
+	defaultStartTime = time.Date(0, 1, 1, 8, 30, 0, 0, time.UTC)
+	defaultEndTime   = time.Date(0, 1, 1, 8, 30, 0, 0, time.UTC)
+)
+
 type WorkPlan struct {
 	Monday    *Day `bson:"monday" json:"monday"`
 	Tuesday   *Day `bson:"tuesday" json:"tuesday"`
@@ -27,7 +32,7 @@ func NewWorkPlan(monday, tuesday, wednesday, thursday, friday, saturday, sunday 
 }
 
 func DefaultWorkPlan() (*WorkPlan, error) {
-	day, err := NewDay(time.Now(), time.Now(), nil)
+	day, err := NewDay(defaultStartTime, defaultEndTime, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -39,4 +44,26 @@ func DefaultWorkPlan() (*WorkPlan, error) {
 		Friday:    day,
 		Saturday:  day,
 	}, nil
+}
+
+func (w *WorkPlan) GetDayFromWorkPlan(t time.Time) *Day {
+	weekday := t.Weekday()
+	switch weekday {
+	case time.Monday:
+		return w.Monday
+	case time.Tuesday:
+		return w.Tuesday
+	case time.Wednesday:
+		return w.Wednesday
+	case time.Thursday:
+		return w.Thursday
+	case time.Friday:
+		return w.Friday
+	case time.Saturday:
+		return w.Saturday
+	case time.Sunday:
+		return w.Sunday
+	default:
+		return nil
+	}
 }

@@ -31,6 +31,18 @@ func (e *EstablishmentMongoRepository) Save(ctx context.Context, entity *entity.
 	return entity, nil
 }
 
+func (e *EstablishmentMongoRepository) Get(ctx context.Context, id string) (*entity.Establishment, error) {
+	oid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, err
+	}
+	var establishment entity.Establishment
+	if err := e.coll.FindOne(ctx, bson.M{"_id": oid}).Decode(&establishment); err != nil {
+		return nil, err
+	}
+	return &establishment, nil
+}
+
 func (e *EstablishmentMongoRepository) GetByAccountID(ctx context.Context, accountID string) (*entity.Establishment, error) {
 	var establishment entity.Establishment
 	if err := e.coll.FindOne(ctx, bson.M{"accountID": accountID}).Decode(&establishment); err != nil {

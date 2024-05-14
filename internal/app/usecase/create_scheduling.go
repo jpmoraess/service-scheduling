@@ -2,7 +2,7 @@ package usecase
 
 import (
 	"context"
-	"fmt"
+	"sync"
 
 	"github.com/jpmoraess/service-scheduling/internal/app/dto"
 	"github.com/jpmoraess/service-scheduling/internal/app/repository"
@@ -10,12 +10,26 @@ import (
 )
 
 type CreateScheduling struct {
-	schedulingRepository repository.SchedulingRepository
+	serviceRepository       repository.ServiceRepository
+	customerRepository      repository.CustomerRepository
+	professionalRepository  repository.ProfessionalRepository
+	establishmentRepository repository.EstablishmentRepository
+	schedulingRepository    repository.SchedulingRepository
 }
 
-func NewCreateScheduling(schedulingRepository repository.SchedulingRepository) *CreateScheduling {
+func NewCreateScheduling(
+	serviceRepository repository.ServiceRepository,
+	customerRepository repository.CustomerRepository,
+	professionalRepository repository.ProfessionalRepository,
+	establishmentRepository repository.EstablishmentRepository,
+	schedulingRepository repository.SchedulingRepository,
+) *CreateScheduling {
 	return &CreateScheduling{
-		schedulingRepository: schedulingRepository,
+		serviceRepository:       serviceRepository,
+		customerRepository:      customerRepository,
+		professionalRepository:  professionalRepository,
+		establishmentRepository: establishmentRepository,
+		schedulingRepository:    schedulingRepository,
 	}
 }
 
@@ -31,17 +45,83 @@ func (c *CreateScheduling) Execute(ctx context.Context, input dto.CreateScheduli
 		return err
 	}
 
-	// TODO: aplicar algumas validacoes
-
-	scheduling, err := entity.NewScheduling(input.ServiceID, input.CustomerID, input.ProfessionalID, input.EstablishmentID, date, time)
+	resp, err := c.getData(ctx, input)
 	if err != nil {
 		return err
 	}
 
-	scheduling, err = c.schedulingRepository.Save(ctx, scheduling)
+	scheduling, err := entity.NewScheduling(resp.service, resp.customer, resp.professional, resp.establishment, date, time)
 	if err != nil {
 		return err
 	}
-	fmt.Println("success scheduling: ", scheduling)
+
+	_, err = c.schedulingRepository.Save(ctx, scheduling)
+	if err != nil {
+		return err
+	}
+
 	return nil
+}
+
+type ResponseData struct {
+	service       *entity.Service
+	customer      *entity.Customer
+	professional  *entity.Professional
+	establishment *entity.Establishment
+}
+
+func (c *CreateScheduling) getData(ctx context.Context, input dto.CreateSchedulingInput) (*ResponseData, error) {
+	var (
+		resp  = &ResponseData{}
+		wg    = sync.WaitGroup{}
+		errCh = make(chan error, 4)
+	)
+
+	wg.Add(4)
+	go func() {
+		defer wg.Done()
+		service, err := c.serviceRepository.Get(ctx, input.ServiceID)
+		if err != nil {
+			errCh <- err
+			return
+		}
+		resp.service = service
+	}()
+	go func() {
+		defer wg.Done()
+		customer, err := c.customerRepository.Get(ctx, input.CustomerID)
+		if err != nil {
+			errCh <- err
+			return
+		}
+		resp.customer = customer
+	}()
+	go func() {
+		defer wg.Done()
+		professional, err := c.professionalRepository.Get(ctx, input.ProfessionalID)
+		if err != nil {
+			errCh <- err
+			return
+		}
+		resp.professional = professional
+	}()
+	go func() {
+		defer wg.Done()
+		establishment, err := c.establishmentRepository.Get(ctx, input.EstablishmentID)
+		if err != nil {
+			errCh <- err
+			return
+		}
+		resp.establishment = establishment
+	}()
+	wg.Wait()
+	close(errCh)
+
+	for err := range errCh {
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return resp, nil
 }

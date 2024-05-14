@@ -1,6 +1,8 @@
 package entity
 
-import "time"
+import (
+	"time"
+)
 
 type Scheduling struct {
 	ID              string    `bson:"_id,omitempty" json:"id,omitempty"`
@@ -12,12 +14,15 @@ type Scheduling struct {
 	Time            time.Time `bson:"time" json:"time"`
 }
 
-func NewScheduling(serviceID, customerID, professionalID, establishmentID string, date, time time.Time) (*Scheduling, error) {
+func NewScheduling(service *Service, customer *Customer, professional *Professional, establishment *Establishment, date time.Time, time time.Time) (*Scheduling, error) {
+	if err := professional.CanScheduleAtTheSpecifiedDateAndTime(date, time); err != nil {
+		return nil, err
+	}
 	return &Scheduling{
-		ServiceID:       serviceID,
-		CustomerID:      customerID,
-		ProfessionalID:  professionalID,
-		EstablishmentID: establishmentID,
+		ServiceID:       service.ID,
+		CustomerID:      customer.ID,
+		ProfessionalID:  professional.ID,
+		EstablishmentID: establishment.ID,
 		Date:            date,
 		Time:            time,
 	}, nil

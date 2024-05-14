@@ -5,16 +5,16 @@ import (
 )
 
 type Day struct {
-	Start time.Time `bson:"start" json:"start"`
-	End   time.Time `bson:"end" json:"end"`
-	Break *Break    `bson:"break" json:"break"`
+	StartTime time.Time `bson:"startTime" json:"startTime"`
+	EndTime   time.Time `bson:"endTime" json:"endTime"`
+	Break     *Break    `bson:"break" json:"break"`
 }
 
-func NewDay(start time.Time, end time.Time, aBreak *Break) (*Day, error) {
+func NewDay(startTime time.Time, endTime time.Time, aBreak *Break) (*Day, error) {
 	// TODO: some validations
 	return &Day{
-		Start: start,
-		End:   end,
-		Break: aBreak,
+		StartTime: startTime,
+		EndTime:   endTime,
+		Break:     aBreak,
 	}, nil
 }

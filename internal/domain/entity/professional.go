@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/jpmoraess/service-scheduling/internal/domain/vo"
@@ -29,4 +30,27 @@ func NewProfessional(accountID, establishmentID, name string) (*Professional, er
 		Active:          true,
 		CreatedAt:       time.Now(),
 	}, nil
+}
+
+func (p *Professional) CanScheduleAtTheSpecifiedDateAndTime(date, time time.Time) error {
+	day := p.WorkPlan.GetDayFromWorkPlan(date)
+	if day == nil {
+		return fmt.Errorf("professional does not work on the chosen day")
+	}
+
+	// TODO: verify professional's break
+
+	// check if the time is within range
+	if day.StartTime.Before(day.EndTime) {
+		if (time.Equal(day.StartTime) || time.After(day.StartTime)) && (time.Equal(day.EndTime) || time.Before(day.EndTime)) {
+			return nil
+		}
+	} else {
+		// case where the interval crosses midnight
+		if time.Equal(day.StartTime) || time.After(day.StartTime) || time.Equal(day.EndTime) || time.Before(day.EndTime) {
+			return nil
+		}
+	}
+
+	return fmt.Errorf("hours outside the professional's scheduling range")
 }

@@ -31,6 +31,18 @@ func (c *CustomerMongoRepository) Save(ctx context.Context, entity *entity.Custo
 	return entity, nil
 }
 
+func (c *CustomerMongoRepository) Get(ctx context.Context, id string) (*entity.Customer, error) {
+	oid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, err
+	}
+	var customer entity.Customer
+	if err := c.coll.FindOne(ctx, bson.M{"_id": oid}).Decode(&customer); err != nil {
+		return nil, err
+	}
+	return &customer, nil
+}
+
 func (c *CustomerMongoRepository) GetByEstablishmentIDAndPhoneNumber(ctx context.Context, establishmentID string, phoneNumber string) (*entity.Customer, error) {
 	filter := bson.M{
 		"establishmentID": establishmentID,

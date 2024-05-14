@@ -40,7 +40,7 @@ func main() {
 		createProfessional = usecase.NewCreateProfessional(accountRepository, professionalRepository, establishmentRepository)
 		getProfessional    = usecase.NewGetProfessional(professionalRepository)
 		createCustomer     = usecase.NewCreateCustomer(customerRepository, establishmentRepository)
-		createScheduling   = usecase.NewCreateScheduling(schedulingRepository)
+		createScheduling   = usecase.NewCreateScheduling(serviceRepository, customerRepository, professionalRepository, establishmentRepository, schedulingRepository)
 
 		// handlers initialization
 		authHandler         = handlers.NewAuthHandler(signup, signin)

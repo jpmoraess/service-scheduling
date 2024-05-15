@@ -3,8 +3,8 @@ package usecase
 import (
 	"context"
 
+	"github.com/jpmoraess/service-scheduling/internal/app/dto"
 	"github.com/jpmoraess/service-scheduling/internal/app/repository"
-	"github.com/jpmoraess/service-scheduling/internal/domain/entity"
 )
 
 type GetProfessional struct {
@@ -17,10 +17,14 @@ func NewGetProfessional(professionalRepository repository.ProfessionalRepository
 	}
 }
 
-func (g *GetProfessional) Execute(ctx context.Context, id string) (*entity.Professional, error) {
+func (g *GetProfessional) Execute(ctx context.Context, id string) (*dto.ProfessionalOutput, error) {
 	professional, err := g.professionalRepository.Get(ctx, id)
 	if err != nil {
 		return nil, err
 	}
-	return professional, nil
+	professionalOutput := &dto.ProfessionalOutput{
+		ID:   professional.ID(),
+		Name: professional.Name(),
+	}
+	return professionalOutput, nil
 }

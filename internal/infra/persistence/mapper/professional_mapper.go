@@ -163,12 +163,12 @@ func ToProfessionalData(professional *entity.Professional) (*data.ProfessionalDa
 	}, nil
 }
 
-func FromProfessionalData(p *data.ProfessionalData) (*entity.Professional, error) {
-	workPlan, err := toWorkPlan(p.WorkPlan)
+func FromProfessionalData(data *data.ProfessionalData) (*entity.Professional, error) {
+	workPlan, err := toWorkPlan(data.WorkPlan)
 	if err != nil {
 		return nil, err
 	}
-	professional, err := entity.RestoreProfessional(p.ID.Hex(), p.AccountID, p.EstablishmentID, p.Name, workPlan)
+	professional, err := entity.RestoreProfessional(data.ID.Hex(), data.AccountID, data.EstablishmentID, data.Name, workPlan)
 	if err != nil {
 		fmt.Println("error to restore professional from database", err)
 		return nil, err

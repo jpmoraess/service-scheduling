@@ -17,6 +17,16 @@ func NewCustomer(establishmentID, name, phoneNumber, email string) (*Customer, e
 	}, nil
 }
 
+func RestoreCustomer(id string, establishmentID, name, phoneNumber, email string) (*Customer, error) {
+	return &Customer{
+		id:              id,
+		establishmentID: establishmentID,
+		name:            name,
+		phoneNumber:     phoneNumber,
+		email:           email,
+	}, nil
+}
+
 func (a *Customer) SetID(id string) {
 	a.id = id
 }

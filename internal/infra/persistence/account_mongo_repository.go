@@ -2,6 +2,7 @@ package persistence
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/jpmoraess/service-scheduling/configs"
 	"github.com/jpmoraess/service-scheduling/internal/domain/entity"
@@ -45,10 +46,12 @@ func toAccountData(account *entity.Account) (*accountData, error) {
 func fromAccountData(accountData *accountData) (*entity.Account, error) {
 	accountType, err := vo.ParseAccountTypeFromInt(accountData.AccountType)
 	if err != nil {
+		fmt.Println("error parse account type from int", err)
 		return nil, err
 	}
-	account, err := entity.NewAccount(accountType, accountData.Name, accountData.Email, accountData.PhoneNumber, accountData.EncryptedPassword)
+	account, err := entity.RestoreAccount(accountData.ID.Hex(), accountType, accountData.Name, accountData.Email, accountData.PhoneNumber, accountData.EncryptedPassword)
 	if err != nil {
+		fmt.Println("error to restore an existent account", err)
 		return nil, err
 	}
 	return account, nil
@@ -57,10 +60,12 @@ func fromAccountData(accountData *accountData) (*entity.Account, error) {
 func (a *AccountMongoRepository) Save(ctx context.Context, entity *entity.Account) (*entity.Account, error) {
 	accountData, err := toAccountData(entity)
 	if err != nil {
+		fmt.Println("error parse account data from entity", err)
 		return nil, err
 	}
 	res, err := a.coll.InsertOne(ctx, accountData)
 	if err != nil {
+		fmt.Println("error to insert account data into database", err)
 		return nil, err
 	}
 	entity.SetID(res.InsertedID.(primitive.ObjectID).Hex())

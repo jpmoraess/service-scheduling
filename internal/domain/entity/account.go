@@ -23,6 +23,16 @@ func NewAccount(accountType vo.AccountType, name, email, phoneNumber, encryptedP
 	}, nil
 }
 
+func RestoreAccount(id string, accountType vo.AccountType, name, email, phoneNumber, encryptedPassword string) (*Account, error) {
+	return &Account{
+		id:                id,
+		accountType:       accountType,
+		name:              name,
+		email:             email,
+		phoneNumber:       phoneNumber,
+		encryptedPassword: encryptedPassword,
+	}, nil
+}
 func (a *Account) SetID(id string) {
 	a.id = id
 }

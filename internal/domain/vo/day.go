@@ -11,7 +11,6 @@ type Day struct {
 }
 
 func NewDay(startTime time.Time, endTime time.Time, aBreak *Break) (*Day, error) {
-	// TODO: some validations
 	return &Day{
 		startTime: startTime,
 		endTime:   endTime,

@@ -30,17 +30,17 @@ type customerData struct {
 	Email           string             `bson:"email"`
 }
 
-func toCustomerData(customer *entity.Customer) (*customerData, error) {
+func toCustomerData(entity *entity.Customer) (*customerData, error) {
 	return &customerData{
-		EstablishmentID: customer.EstablishmentID(),
-		Name:            customer.Name(),
-		PhoneNumber:     customer.PhoneNumber(),
-		Email:           customer.Email(),
+		EstablishmentID: entity.EstablishmentID(),
+		Name:            entity.Name(),
+		PhoneNumber:     entity.PhoneNumber(),
+		Email:           entity.Email(),
 	}, nil
 }
 
-func fromCustomerData(customerData *customerData) (*entity.Customer, error) {
-	customer, err := entity.NewCustomer(customerData.EstablishmentID, customerData.Name, customerData.PhoneNumber, customerData.Email)
+func fromCustomerData(data *customerData) (*entity.Customer, error) {
+	customer, err := entity.RestoreCustomer(data.ID.Hex(), data.EstablishmentID, data.Name, data.PhoneNumber, data.Email)
 	if err != nil {
 		return nil, err
 	}

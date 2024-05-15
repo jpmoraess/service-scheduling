@@ -34,7 +34,7 @@ func (c *CreateService) Execute(ctx context.Context, input dto.CreateServiceInpu
 		return fmt.Errorf("establishment not found") // TODO: treat error better
 	}
 
-	service, err := entity.NewService(establishment.ID(), input.Name, input.Description, vo.NewMoney(input.Price), time.Duration(input.DurationInMinutes))
+	service, err := entity.NewService(establishment.ID(), input.Name, input.Description, vo.NewMoney(input.Price), time.Duration(input.DurationInMinutes), true)
 	if err != nil {
 		return err
 	}

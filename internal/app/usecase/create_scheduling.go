@@ -50,7 +50,7 @@ func (c *CreateScheduling) Execute(ctx context.Context, input dto.CreateScheduli
 		return err
 	}
 
-	scheduling, err := entity.NewScheduling(resp.service, resp.customer, resp.professional, resp.establishment, date, time)
+	scheduling, err := entity.NewScheduling(resp.service.ID(), resp.customer.ID(), resp.professional.ID(), resp.establishment.ID(), date, time)
 	if err != nil {
 		return err
 	}

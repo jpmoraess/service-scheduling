@@ -43,6 +43,7 @@ func DefaultWorkPlan() (*WorkPlan, error) {
 		thursday:  day,
 		friday:    day,
 		saturday:  day,
+		sunday:    day,
 	}, nil
 }
 
@@ -66,4 +67,32 @@ func (w *WorkPlan) GetDayFromWorkPlan(t time.Time) *Day {
 	default:
 		return nil
 	}
+}
+
+func (w *WorkPlan) Monday() *Day {
+	return w.monday
+}
+
+func (w *WorkPlan) Tuesday() *Day {
+	return w.tuesday
+}
+
+func (w *WorkPlan) Wednesday() *Day {
+	return w.wednesday
+}
+
+func (w *WorkPlan) Thursday() *Day {
+	return w.thursday
+}
+
+func (w *WorkPlan) Friday() *Day {
+	return w.friday
+}
+
+func (w *WorkPlan) Saturday() *Day {
+	return w.saturday
+}
+
+func (w *WorkPlan) Sunday() *Day {
+	return w.sunday
 }

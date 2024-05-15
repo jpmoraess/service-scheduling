@@ -1,0 +1,25 @@
+project/
+├── application/
+│   ├── usecases/
+│   │   ├── create_address.go
+│   │   └── get_address.go
+│   ├── commands/
+│   │   └── create_address_command.go
+│   ├── queries/
+│   │   └── get_address_query.go
+├── domain/
+│   ├── model/
+│   │   └── address.go
+│   ├── repository/
+│   │   └── address_repository.go
+│   └── service/
+│       └── address_domain_service.go
+├── infra/
+│   ├── persistence/
+│   │   ├── data/
+│   │   │   └── address_dto.go
+│   │   ├── mapper/
+│   │   │   └── address_mapper.go
+│   │   └── address_repository_impl.go
+│   └── config/
+│       └── db_config.go

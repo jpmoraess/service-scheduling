@@ -8,7 +8,6 @@ type Break struct {
 }
 
 func NewBreak(startTime, endTime time.Time) (*Break, error) {
-	// apply some validations
 	return &Break{
 		startTime: startTime,
 		endTime:   endTime,

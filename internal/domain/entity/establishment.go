@@ -23,6 +23,19 @@ func NewEstablishment(accountID, name, slug string) (*Establishment, error) {
 	}, nil
 }
 
+func RestoreEstablishment(id, accountID, name, slug string) (*Establishment, error) {
+	slugValue, err := vo.NewSlug(slug)
+	if err != nil {
+		return nil, err
+	}
+	return &Establishment{
+		id:        id,
+		accountID: accountID,
+		name:      name,
+		slug:      slugValue,
+	}, nil
+}
+
 func (a *Establishment) SetID(id string) {
 	a.id = id
 }

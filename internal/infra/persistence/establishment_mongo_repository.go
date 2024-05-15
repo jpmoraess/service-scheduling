@@ -29,16 +29,16 @@ type establishmentData struct {
 	Slug      string             `bson:"slug"`
 }
 
-func toEstablishmentData(establishment *entity.Establishment) (*establishmentData, error) {
+func toEstablishmentData(entity *entity.Establishment) (*establishmentData, error) {
 	return &establishmentData{
-		AccountID: establishment.AccountID(),
-		Name:      establishment.Name(),
-		Slug:      establishment.Slug(),
+		AccountID: entity.AccountID(),
+		Name:      entity.Name(),
+		Slug:      entity.Slug(),
 	}, nil
 }
 
-func fromEstablishmentData(establishmentData *establishmentData) (*entity.Establishment, error) {
-	establishment, err := entity.NewEstablishment(establishmentData.AccountID, establishmentData.Name, establishmentData.Slug)
+func fromEstablishmentData(data *establishmentData) (*entity.Establishment, error) {
+	establishment, err := entity.RestoreEstablishment(data.ID.Hex(), data.AccountID, data.Name, data.Slug)
 	if err != nil {
 		return nil, err
 	}

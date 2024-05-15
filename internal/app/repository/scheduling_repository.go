@@ -8,4 +8,5 @@ import (
 
 type SchedulingRepository interface {
 	Save(context.Context, *entity.Scheduling) (*entity.Scheduling, error)
+	Get(context.Context, string) (*entity.Scheduling, error)
 }

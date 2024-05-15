@@ -7,16 +7,16 @@ import (
 )
 
 type Service struct {
-	id              string        //`bson:"_id,omitempty" json:"id,omitempty"`
-	establishmentID string        //`bson:"establishmentID" json:"establishmentID"`
-	name            string        //`bson:"name" json:"name"`
-	description     string        //`bson:"description" json:"description"`
-	price           *vo.Money     //`bson:"price" json:"price"`
-	duration        time.Duration //`bson:"duration" json:"duration"`
-	available       bool          //`bson:"available" json:"available"`
+	id              string
+	establishmentID string
+	name            string
+	description     string
+	price           *vo.Money
+	duration        time.Duration
+	available       bool
 }
 
-func NewService(establishmentID, name, description string, price *vo.Money, duration time.Duration) (*Service, error) {
+func NewService(establishmentID, name, description string, price *vo.Money, duration time.Duration, available bool) (*Service, error) {
 	// TODO: validate price, duration....
 	return &Service{
 		establishmentID: establishmentID,
@@ -24,7 +24,7 @@ func NewService(establishmentID, name, description string, price *vo.Money, dura
 		description:     description,
 		price:           price,
 		duration:        duration,
-		available:       true,
+		available:       available,
 	}, nil
 }
 

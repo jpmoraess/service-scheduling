@@ -30,6 +30,17 @@ func NewProfessional(accountID, establishmentID, name string) (*Professional, er
 	}, nil
 }
 
+func RestoreProfessional(id, accountID, establishmentID, name string, workPlan *vo.WorkPlan) (*Professional, error) {
+	return &Professional{
+		id:              id,
+		accountID:       accountID,
+		establishmentID: establishmentID,
+		name:            name,
+		workPlan:        workPlan,
+		active:          true,
+	}, nil
+}
+
 func (p *Professional) CanScheduleAtTheSpecifiedDateAndTime(date, time time.Time) error {
 	day := p.WorkPlan().GetDayFromWorkPlan(date)
 	if day == nil {

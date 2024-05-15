@@ -1,14 +1,11 @@
 package entity
 
-import "time"
-
 type Customer struct {
-	id              string    //`bson:"_id,omitempty" json:"id,omitempty"`
-	establishmentID string    //`bson:"establishmentID" json:"establishmentID"`
-	name            string    //`bson:"name" json:"name"`
-	phoneNumber     string    //`bson:"phoneNumber" json:"phoneNumber"`
-	email           string    //`bson:"email" json:"email"`
-	createdAt       time.Time //`bson:"createdAt" json:"createdAt"`
+	id              string
+	establishmentID string
+	name            string
+	phoneNumber     string
+	email           string
 }
 
 func NewCustomer(establishmentID, name, phoneNumber, email string) (*Customer, error) {
@@ -17,7 +14,6 @@ func NewCustomer(establishmentID, name, phoneNumber, email string) (*Customer, e
 		name:            name,
 		phoneNumber:     phoneNumber,
 		email:           email,
-		createdAt:       time.Now(),
 	}, nil
 }
 
@@ -27,4 +23,20 @@ func (a *Customer) SetID(id string) {
 
 func (a *Customer) ID() string {
 	return a.id
+}
+
+func (a *Customer) EstablishmentID() string {
+	return a.establishmentID
+}
+
+func (a *Customer) Name() string {
+	return a.name
+}
+
+func (a *Customer) PhoneNumber() string {
+	return a.phoneNumber
+}
+
+func (a *Customer) Email() string {
+	return a.email
 }

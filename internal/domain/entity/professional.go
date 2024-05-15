@@ -8,13 +8,12 @@ import (
 )
 
 type Professional struct {
-	id              string       //`bson:"_id,omitempty" json:"id,omitempty"`
-	accountID       string       //`bson:"accountID" json:"accountID"`
-	establishmentID string       //`bson:"establishmentID" json:"establishmentID"`
-	name            string       //`bson:"name" json:"name"`
-	workPlan        *vo.WorkPlan //`bson:"workPlan" json:"workPlan"`
-	active          bool         //`bson:"active" json:"active"`
-	createdAt       time.Time    //`bson:"createdAt" json:"createdAt"`
+	id              string
+	accountID       string
+	establishmentID string
+	name            string
+	workPlan        *vo.WorkPlan
+	active          bool
 }
 
 func NewProfessional(accountID, establishmentID, name string) (*Professional, error) {
@@ -28,7 +27,6 @@ func NewProfessional(accountID, establishmentID, name string) (*Professional, er
 		name:            name,
 		workPlan:        workPlan,
 		active:          true,
-		createdAt:       time.Now(),
 	}, nil
 }
 
@@ -77,4 +75,8 @@ func (p *Professional) Name() string {
 
 func (p *Professional) WorkPlan() *vo.WorkPlan {
 	return p.workPlan
+}
+
+func (p *Professional) Active() bool {
+	return p.active
 }

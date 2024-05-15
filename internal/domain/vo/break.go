@@ -3,8 +3,8 @@ package vo
 import "time"
 
 type Break struct {
-	startTime time.Time `bson:"startTime" json:"startTime"`
-	endTime   time.Time `bson:"endTime" json:"endTime"`
+	startTime time.Time
+	endTime   time.Time
 }
 
 func NewBreak(startTime, endTime time.Time) (*Break, error) {

@@ -22,8 +22,37 @@ func NewCustomerMongoRepository(client *mongo.Client) *CustomerMongoRepository {
 	}
 }
 
+type customerData struct {
+	ID              primitive.ObjectID `bson:"_id,omitempty"`
+	EstablishmentID string             `bson:"establishmentID"`
+	Name            string             `bson:"name" json:"name"`
+	PhoneNumber     string             `bson:"phoneNumber"`
+	Email           string             `bson:"email"`
+}
+
+func toCustomerData(customer *entity.Customer) (*customerData, error) {
+	return &customerData{
+		EstablishmentID: customer.EstablishmentID(),
+		Name:            customer.Name(),
+		PhoneNumber:     customer.PhoneNumber(),
+		Email:           customer.Email(),
+	}, nil
+}
+
+func fromCustomerData(customerData *customerData) (*entity.Customer, error) {
+	customer, err := entity.NewCustomer(customerData.EstablishmentID, customerData.Name, customerData.PhoneNumber, customerData.Email)
+	if err != nil {
+		return nil, err
+	}
+	return customer, nil
+}
+
 func (c *CustomerMongoRepository) Save(ctx context.Context, entity *entity.Customer) (*entity.Customer, error) {
-	resp, err := c.coll.InsertOne(ctx, entity)
+	customerData, err := toCustomerData(entity)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := c.coll.InsertOne(ctx, customerData)
 	if err != nil {
 		return nil, err
 	}
@@ -36,11 +65,15 @@ func (c *CustomerMongoRepository) Get(ctx context.Context, id string) (*entity.C
 	if err != nil {
 		return nil, err
 	}
-	var customer entity.Customer
-	if err := c.coll.FindOne(ctx, bson.M{"_id": oid}).Decode(&customer); err != nil {
+	var customerData customerData
+	if err := c.coll.FindOne(ctx, bson.M{"_id": oid}).Decode(&customerData); err != nil {
 		return nil, err
 	}
-	return &customer, nil
+	customer, err := fromCustomerData(&customerData)
+	if err != nil {
+		return nil, err
+	}
+	return customer, nil
 }
 
 func (c *CustomerMongoRepository) GetByEstablishmentIDAndPhoneNumber(ctx context.Context, establishmentID string, phoneNumber string) (*entity.Customer, error) {
@@ -48,9 +81,13 @@ func (c *CustomerMongoRepository) GetByEstablishmentIDAndPhoneNumber(ctx context
 		"establishmentID": establishmentID,
 		"phoneNumber":     phoneNumber,
 	}
-	var customer entity.Customer
-	if err := c.coll.FindOne(ctx, filter).Decode(&customer); err != nil {
+	var customerData customerData
+	if err := c.coll.FindOne(ctx, filter).Decode(&customerData); err != nil {
 		return nil, err
 	}
-	return &customer, nil
+	customer, err := fromCustomerData(&customerData)
+	if err != nil {
+		return nil, err
+	}
+	return customer, nil
 }

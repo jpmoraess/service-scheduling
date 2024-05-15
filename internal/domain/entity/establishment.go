@@ -1,17 +1,14 @@
 package entity
 
 import (
-	"time"
-
 	"github.com/jpmoraess/service-scheduling/internal/domain/vo"
 )
 
 type Establishment struct {
-	id        string    //`bson:"_id,omitempty" json:"id,omitempty"`
-	accountID string    //`bson:"accountID" json:"accountID"`
-	name      string    //`bson:"name" json:"name"`
-	slug      *vo.Slug  //`bson:"slug" json:"slug"`
-	createdAt time.Time //`bson:"createdAt" json:"createdAt"`
+	id        string
+	accountID string
+	name      string
+	slug      *vo.Slug
 }
 
 func NewEstablishment(accountID, name, slug string) (*Establishment, error) {
@@ -23,7 +20,6 @@ func NewEstablishment(accountID, name, slug string) (*Establishment, error) {
 		accountID: accountID,
 		name:      name,
 		slug:      slugValue,
-		createdAt: time.Now(),
 	}, nil
 }
 
@@ -33,4 +29,16 @@ func (a *Establishment) SetID(id string) {
 
 func (a *Establishment) ID() string {
 	return a.id
+}
+
+func (a *Establishment) AccountID() string {
+	return a.accountID
+}
+
+func (a *Establishment) Name() string {
+	return a.name
+}
+
+func (a *Establishment) Slug() string {
+	return a.slug.Value()
 }

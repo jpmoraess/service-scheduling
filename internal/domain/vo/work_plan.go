@@ -10,13 +10,13 @@ var (
 )
 
 type WorkPlan struct {
-	monday    *Day //`bson:"monday" json:"monday"`
-	tuesday   *Day //`bson:"tuesday" json:"tuesday"`
-	wednesday *Day //`bson:"wednesday" json:"wednesday"`
-	thursday  *Day //`bson:"thursday" json:"thursday"`
-	friday    *Day //`bson:"friday" json:"friday"`
-	saturday  *Day //`bson:"saturday" json:"saturday"`
-	sunday    *Day //`bson:"sunday" json:"sunday"`
+	monday    *Day
+	tuesday   *Day
+	wednesday *Day
+	thursday  *Day
+	friday    *Day
+	saturday  *Day
+	sunday    *Day
 }
 
 func NewWorkPlan(monday, tuesday, wednesday, thursday, friday, saturday, sunday *Day) (*WorkPlan, error) {

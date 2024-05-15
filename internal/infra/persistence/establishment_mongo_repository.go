@@ -22,8 +22,35 @@ func NewEstablishmentMongoRepository(client *mongo.Client) *EstablishmentMongoRe
 	}
 }
 
+type establishmentData struct {
+	ID        primitive.ObjectID `bson:"_id,omitempty"`
+	AccountID string             `bson:"accountID"`
+	Name      string             `bson:"name"`
+	Slug      string             `bson:"slug"`
+}
+
+func toEstablishmentData(establishment *entity.Establishment) (*establishmentData, error) {
+	return &establishmentData{
+		AccountID: establishment.AccountID(),
+		Name:      establishment.Name(),
+		Slug:      establishment.Slug(),
+	}, nil
+}
+
+func fromEstablishmentData(establishmentData *establishmentData) (*entity.Establishment, error) {
+	establishment, err := entity.NewEstablishment(establishmentData.AccountID, establishmentData.Name, establishmentData.Slug)
+	if err != nil {
+		return nil, err
+	}
+	return establishment, nil
+}
+
 func (e *EstablishmentMongoRepository) Save(ctx context.Context, entity *entity.Establishment) (*entity.Establishment, error) {
-	res, err := e.coll.InsertOne(ctx, entity)
+	establishmentData, err := toEstablishmentData(entity)
+	if err != nil {
+		return nil, err
+	}
+	res, err := e.coll.InsertOne(ctx, establishmentData)
 	if err != nil {
 		return nil, err
 	}
@@ -36,25 +63,37 @@ func (e *EstablishmentMongoRepository) Get(ctx context.Context, id string) (*ent
 	if err != nil {
 		return nil, err
 	}
-	var establishment entity.Establishment
-	if err := e.coll.FindOne(ctx, bson.M{"_id": oid}).Decode(&establishment); err != nil {
+	var establishmentData establishmentData
+	if err := e.coll.FindOne(ctx, bson.M{"_id": oid}).Decode(&establishmentData); err != nil {
 		return nil, err
 	}
-	return &establishment, nil
+	establishment, err := fromEstablishmentData(&establishmentData)
+	if err != nil {
+		return nil, err
+	}
+	return establishment, nil
 }
 
 func (e *EstablishmentMongoRepository) GetBySlug(ctx context.Context, slug string) (*entity.Establishment, error) {
-	var establishment entity.Establishment
-	if err := e.coll.FindOne(ctx, bson.M{"slug": slug}).Decode(&establishment); err != nil {
+	var establishmentData establishmentData
+	if err := e.coll.FindOne(ctx, bson.M{"slug": slug}).Decode(&establishmentData); err != nil {
 		return nil, err
 	}
-	return &establishment, nil
+	establishment, err := fromEstablishmentData(&establishmentData)
+	if err != nil {
+		return nil, err
+	}
+	return establishment, nil
 }
 
 func (e *EstablishmentMongoRepository) GetByAccountID(ctx context.Context, accountID string) (*entity.Establishment, error) {
-	var establishment entity.Establishment
-	if err := e.coll.FindOne(ctx, bson.M{"accountID": accountID}).Decode(&establishment); err != nil {
+	var establishmentData establishmentData
+	if err := e.coll.FindOne(ctx, bson.M{"accountID": accountID}).Decode(&establishmentData); err != nil {
 		return nil, err
 	}
-	return &establishment, nil
+	establishment, err := fromEstablishmentData(&establishmentData)
+	if err != nil {
+		return nil, err
+	}
+	return establishment, nil
 }

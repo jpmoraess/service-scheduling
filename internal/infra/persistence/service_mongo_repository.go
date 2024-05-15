@@ -3,11 +3,11 @@ package persistence
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/jpmoraess/service-scheduling/configs"
 	"github.com/jpmoraess/service-scheduling/internal/domain/entity"
-	"github.com/jpmoraess/service-scheduling/internal/domain/vo"
+	"github.com/jpmoraess/service-scheduling/internal/infra/persistence/data"
+	"github.com/jpmoraess/service-scheduling/internal/infra/persistence/mapper"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -25,38 +25,8 @@ func NewServiceMongoRepository(client *mongo.Client) *ServiceMongoRepository {
 	}
 }
 
-type serviceData struct {
-	ID              string        `bson:"_id,omitempty"`
-	EstablishmentID string        `bson:"establishmentID"`
-	Name            string        `bson:"name"`
-	Description     string        `bson:"description"`
-	Price           float64       `bson:"price"`
-	Duration        time.Duration `bson:"duration"`
-	Available       bool          `bson:"available"`
-}
-
-func toServiceData(service *entity.Service) (*serviceData, error) {
-	return &serviceData{
-		EstablishmentID: service.EstablishmentID(),
-		Name:            service.Name(),
-		Description:     service.Description(),
-		Price:           service.Price().AmountFloat64(),
-		Duration:        service.Duration(),
-		Available:       service.Available(),
-	}, nil
-}
-
-func fromServiceData(data *serviceData) (*entity.Service, error) {
-	service, err := entity.NewService(data.EstablishmentID, data.Name, data.Description, vo.NewMoney(data.Price), data.Duration, data.Available)
-	if err != nil {
-		fmt.Println("error to create new service", err)
-		return nil, err
-	}
-	return service, nil
-}
-
 func (s *ServiceMongoRepository) Save(ctx context.Context, entity *entity.Service) (*entity.Service, error) {
-	serviceData, err := toServiceData(entity)
+	serviceData, err := mapper.ToServiceData(entity)
 	if err != nil {
 		fmt.Println("error parse account data from entity", err)
 		return nil, err
@@ -75,11 +45,11 @@ func (s *ServiceMongoRepository) Get(ctx context.Context, id string) (*entity.Se
 	if err != nil {
 		return nil, err
 	}
-	var serviceData serviceData
+	var serviceData data.ServiceData
 	if err := s.coll.FindOne(ctx, bson.M{"_id": oid}).Decode(&serviceData); err != nil {
 		return nil, err
 	}
-	service, err := fromServiceData(&serviceData)
+	service, err := mapper.FromServiceData(&serviceData)
 	if err != nil {
 		return nil, err
 	}
@@ -91,13 +61,13 @@ func (s *ServiceMongoRepository) FindByEstablishmentID(ctx context.Context, esta
 	if err != nil {
 		return nil, err
 	}
-	var serviceData []*serviceData
+	var serviceData []*data.ServiceData
 	if err := resp.All(ctx, &serviceData); err != nil {
 		return nil, err
 	}
 	var services []*entity.Service
 	for _, data := range serviceData {
-		service, err := fromServiceData(data)
+		service, err := mapper.FromServiceData(data)
 		if err != nil {
 			return nil, err
 		}

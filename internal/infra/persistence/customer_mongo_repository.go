@@ -5,6 +5,8 @@ import (
 
 	"github.com/jpmoraess/service-scheduling/configs"
 	"github.com/jpmoraess/service-scheduling/internal/domain/entity"
+	"github.com/jpmoraess/service-scheduling/internal/infra/persistence/data"
+	"github.com/jpmoraess/service-scheduling/internal/infra/persistence/mapper"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -22,33 +24,8 @@ func NewCustomerMongoRepository(client *mongo.Client) *CustomerMongoRepository {
 	}
 }
 
-type customerData struct {
-	ID              primitive.ObjectID `bson:"_id,omitempty"`
-	EstablishmentID string             `bson:"establishmentID"`
-	Name            string             `bson:"name" json:"name"`
-	PhoneNumber     string             `bson:"phoneNumber"`
-	Email           string             `bson:"email"`
-}
-
-func toCustomerData(entity *entity.Customer) (*customerData, error) {
-	return &customerData{
-		EstablishmentID: entity.EstablishmentID(),
-		Name:            entity.Name(),
-		PhoneNumber:     entity.PhoneNumber(),
-		Email:           entity.Email(),
-	}, nil
-}
-
-func fromCustomerData(data *customerData) (*entity.Customer, error) {
-	customer, err := entity.RestoreCustomer(data.ID.Hex(), data.EstablishmentID, data.Name, data.PhoneNumber, data.Email)
-	if err != nil {
-		return nil, err
-	}
-	return customer, nil
-}
-
 func (c *CustomerMongoRepository) Save(ctx context.Context, entity *entity.Customer) (*entity.Customer, error) {
-	customerData, err := toCustomerData(entity)
+	customerData, err := mapper.ToCustomerData(entity)
 	if err != nil {
 		return nil, err
 	}
@@ -65,11 +42,11 @@ func (c *CustomerMongoRepository) Get(ctx context.Context, id string) (*entity.C
 	if err != nil {
 		return nil, err
 	}
-	var customerData customerData
+	var customerData data.CustomerData
 	if err := c.coll.FindOne(ctx, bson.M{"_id": oid}).Decode(&customerData); err != nil {
 		return nil, err
 	}
-	customer, err := fromCustomerData(&customerData)
+	customer, err := mapper.FromCustomerData(&customerData)
 	if err != nil {
 		return nil, err
 	}
@@ -81,11 +58,11 @@ func (c *CustomerMongoRepository) GetByEstablishmentIDAndPhoneNumber(ctx context
 		"establishmentID": establishmentID,
 		"phoneNumber":     phoneNumber,
 	}
-	var customerData customerData
+	var customerData data.CustomerData
 	if err := c.coll.FindOne(ctx, filter).Decode(&customerData); err != nil {
 		return nil, err
 	}
-	customer, err := fromCustomerData(&customerData)
+	customer, err := mapper.FromCustomerData(&customerData)
 	if err != nil {
 		return nil, err
 	}

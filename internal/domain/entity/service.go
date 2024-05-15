@@ -17,8 +17,19 @@ type Service struct {
 }
 
 func NewService(establishmentID, name, description string, price *vo.Money, duration time.Duration, available bool) (*Service, error) {
-	// TODO: validate price, duration....
 	return &Service{
+		establishmentID: establishmentID,
+		name:            name,
+		description:     description,
+		price:           price,
+		duration:        duration,
+		available:       available,
+	}, nil
+}
+
+func RestoreService(id, establishmentID, name, description string, price *vo.Money, duration time.Duration, available bool) (*Service, error) {
+	return &Service{
+		id:              id,
 		establishmentID: establishmentID,
 		name:            name,
 		description:     description,

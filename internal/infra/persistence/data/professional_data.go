@@ -2,6 +2,8 @@ package data
 
 import (
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type BreakData struct {
@@ -26,10 +28,10 @@ type WorkPlanData struct {
 }
 
 type ProfessionalData struct {
-	ID              string        `bson:"_id,omitempty"`
-	AccountID       string        `bson:"accountID"`
-	EstablishmentID string        `bson:"establishmentID"`
-	Name            string        `bson:"name"`
-	WorkPlan        *WorkPlanData `bson:"workPlan"`
-	Active          bool          `bson:"active"`
+	ID              primitive.ObjectID `bson:"_id,omitempty"`
+	AccountID       string             `bson:"accountID"`
+	EstablishmentID string             `bson:"establishmentID"`
+	Name            string             `bson:"name"`
+	WorkPlan        *WorkPlanData      `bson:"workPlan"`
+	Active          bool               `bson:"active"`
 }

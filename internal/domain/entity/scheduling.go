@@ -12,7 +12,6 @@ type Scheduling struct {
 	establishmentID string
 	date            time.Time
 	time            time.Time
-	createdAt       time.Time
 }
 
 func NewScheduling(serviceID string, customerID string, professionalID string, establishmentID string, dateDate time.Time, timeTime time.Time) (*Scheduling, error) {
@@ -23,7 +22,18 @@ func NewScheduling(serviceID string, customerID string, professionalID string, e
 		establishmentID: establishmentID,
 		date:            dateDate,
 		time:            timeTime,
-		createdAt:       time.Now(),
+	}, nil
+}
+
+func RestoreScheduling(id string, serviceID string, customerID string, professionalID string, establishmentID string, dateDate time.Time, timeTime time.Time) (*Scheduling, error) {
+	return &Scheduling{
+		id:              id,
+		serviceID:       serviceID,
+		customerID:      customerID,
+		professionalID:  professionalID,
+		establishmentID: establishmentID,
+		date:            dateDate,
+		time:            timeTime,
 	}, nil
 }
 
@@ -49,4 +59,12 @@ func (a *Scheduling) ProfessionalID() string {
 
 func (a *Scheduling) EstablishmentID() string {
 	return a.establishmentID
+}
+
+func (a *Scheduling) Date() time.Time {
+	return a.date
+}
+
+func (a *Scheduling) Time() time.Time {
+	return a.time
 }

@@ -14,7 +14,7 @@ type BreakData struct {
 type DayData struct {
 	StartTime time.Time  `bson:"startTime"`
 	EndTime   time.Time  `bson:"endTime"`
-	ABreak    *BreakData `bson:"aBreak"`
+	Break     *BreakData `bson:"break"`
 }
 
 type WorkPlanData struct {

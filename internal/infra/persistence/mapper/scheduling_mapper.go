@@ -9,7 +9,7 @@ import (
 
 func ToSchedulingData(scheduling *entity.Scheduling) (*data.SchedulingData, error) {
 	return &data.SchedulingData{
-		ServiceID:       scheduling.ID(),
+		ServiceID:       scheduling.ServiceID(),
 		CustomerID:      scheduling.CustomerID(),
 		ProfessionalID:  scheduling.ProfessionalID(),
 		EstablishmentID: scheduling.EstablishmentID(),

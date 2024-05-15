@@ -9,12 +9,10 @@ import (
 )
 
 func toBreak(b *data.BreakData) (*vo.Break, error) {
-	aBreak, err := vo.NewBreak(b.StartTime, b.EndTime)
-	if err != nil {
-		fmt.Println("error parse", err)
-		return nil, err
+	if b == nil {
+		return nil, nil
 	}
-	return aBreak, nil
+	return vo.NewBreak(b.StartTime, b.EndTime)
 }
 
 func toBreakData(aBreak *vo.Break) (*data.BreakData, error) {
@@ -25,25 +23,43 @@ func toBreakData(aBreak *vo.Break) (*data.BreakData, error) {
 }
 
 func toDay(d *data.DayData) (*vo.Day, error) {
-	aBreak, err := toBreak(d.ABreak)
+	aBreak, err := toBreak(d.Break)
 	if err != nil {
-		fmt.Println("error parse", err)
 		return nil, err
 	}
 	day, err := vo.NewDay(d.StartTime, d.EndTime, aBreak)
 	if err != nil {
-		fmt.Println("error parse", err)
 		return nil, err
 	}
 	return day, nil
 }
 
+// func toDayData(day *vo.Day) (*data.DayData, error) {
+// 	var breakData = &data.BreakData{}
+// 	if day.Break() == nil {
+// 		breakData = nil
+// 	} else {
+// 		b, err := toBreakData(day.Break())
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		breakData = b
+// 	}
+// 	return &data.DayData{
+// 		StartTime: day.StartTime(),
+// 		EndTime:   day.EndTime(),
+// 		Break:     breakData,
+// 	}, nil
+// }
+
 func toDayData(day *vo.Day) (*data.DayData, error) {
-	var breakData = &data.BreakData{}
-	if day.Break() == nil {
-		breakData = nil
-	} else {
-		b, err := toBreakData(day.Break())
+	if day == nil {
+		return nil, nil
+	}
+	breakVO := day.Break()
+	var breakData *data.BreakData
+	if breakVO != nil {
+		b, err := toBreakData(breakVO)
 		if err != nil {
 			return nil, err
 		}
@@ -52,7 +68,7 @@ func toDayData(day *vo.Day) (*data.DayData, error) {
 	return &data.DayData{
 		StartTime: day.StartTime(),
 		EndTime:   day.EndTime(),
-		ABreak:    breakData,
+		Break:     breakData,
 	}, nil
 }
 

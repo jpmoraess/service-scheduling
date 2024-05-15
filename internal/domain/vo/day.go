@@ -19,14 +19,14 @@ func NewDay(startTime time.Time, endTime time.Time, aBreak *Break) (*Day, error)
 	}, nil
 }
 
-func (d *Day) GetStartTime() time.Time {
+func (d *Day) StartTime() time.Time {
 	return d.startTime
 }
 
-func (d *Day) GetEndTime() time.Time {
+func (d *Day) EndTime() time.Time {
 	return d.endTime
 }
 
-func (d *Day) GetBreak() *Break {
+func (d *Day) Break() *Break {
 	return d.aBreak
 }

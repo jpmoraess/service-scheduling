@@ -29,12 +29,12 @@ func (c *CreateService) Execute(ctx context.Context, input dto.CreateServiceInpu
 		return err
 	}
 
-	establishment, err := c.establishmentRepository.GetByAccountID(ctx, authData.GetID())
+	establishment, err := c.establishmentRepository.GetByAccountID(ctx, authData.ID())
 	if err != nil {
 		return fmt.Errorf("establishment not found") // TODO: treat error better
 	}
 
-	service, err := entity.NewService(establishment.GetID(), input.Name, input.Description, vo.NewMoney(input.Price), time.Duration(input.DurationInMinutes))
+	service, err := entity.NewService(establishment.ID(), input.Name, input.Description, vo.NewMoney(input.Price), time.Duration(input.DurationInMinutes))
 	if err != nil {
 		return err
 	}

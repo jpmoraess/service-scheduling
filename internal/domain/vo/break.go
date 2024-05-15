@@ -14,3 +14,11 @@ func NewBreak(startTime, endTime time.Time) (*Break, error) {
 		endTime:   endTime,
 	}, nil
 }
+
+func (b *Break) StartTime() time.Time {
+	return b.startTime
+}
+
+func (b *Break) EndTime() time.Time {
+	return b.endTime
+}

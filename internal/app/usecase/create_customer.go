@@ -26,14 +26,14 @@ func (c *CreateCustomer) Execute(ctx context.Context, input dto.CreateCustomerIn
 		return err
 	}
 
-	establishment, err := c.establishmentRepository.GetByAccountID(ctx, authData.GetID())
+	establishment, err := c.establishmentRepository.GetByAccountID(ctx, authData.ID())
 	if err != nil {
 		return err
 	}
 
 	// TODO: validate duplicated customer by establishment and phone number
 
-	customer, err := entity.NewCustomer(establishment.GetID(), input.Name, input.PhoneNumber, input.Email)
+	customer, err := entity.NewCustomer(establishment.ID(), input.Name, input.PhoneNumber, input.Email)
 	if err != nil {
 		return err
 	}

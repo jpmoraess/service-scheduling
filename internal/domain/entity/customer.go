@@ -25,6 +25,6 @@ func (a *Customer) SetID(id string) {
 	a.id = id
 }
 
-func (a *Customer) GetID() string {
+func (a *Customer) ID() string {
 	return a.id
 }

@@ -32,30 +32,30 @@ func (a *Service) SetID(id string) {
 	a.id = id
 }
 
-func (a *Service) GetID() string {
+func (a *Service) ID() string {
 	return a.id
 }
 
-func (s *Service) GetEstablishmentID() string {
+func (s *Service) EstablishmentID() string {
 	return s.establishmentID
 }
 
-func (s *Service) GetName() string {
+func (s *Service) Name() string {
 	return s.name
 }
 
-func (s *Service) GetDescription() string {
+func (s *Service) Description() string {
 	return s.description
 }
 
-func (s *Service) GetPrice() *vo.Money {
+func (s *Service) Price() *vo.Money {
 	return s.price
 }
 
-func (s *Service) GetDuration() time.Duration {
+func (s *Service) Duration() time.Duration {
 	return s.duration
 }
 
-func (s *Service) GetAvailable() bool {
+func (s *Service) Available() bool {
 	return s.available
 }

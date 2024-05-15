@@ -35,11 +35,11 @@ func (m *Money) Multiply(multiplier int64) *Money {
 	return &Money{amount: result}
 }
 
-func (m *Money) GetAmount() *big.Float {
+func (m *Money) Amount() *big.Float {
 	return m.amount
 }
 
-func (m *Money) GetAmountFloat64() float64 {
+func (m *Money) AmountFloat64() float64 {
 	f, _ := m.amount.Float64()
 	return f
 }

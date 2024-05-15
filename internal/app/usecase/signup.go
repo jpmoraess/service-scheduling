@@ -45,7 +45,7 @@ func (a *Signup) Execute(ctx context.Context, input dto.SignupInput) error {
 		return err
 	}
 
-	establishment, err := entity.NewEstablishment(account.GetID(), input.EstablishmentName, "slug")
+	establishment, err := entity.NewEstablishment(account.ID(), input.EstablishmentName, "slug")
 	if err != nil {
 		return err
 	}
@@ -55,7 +55,7 @@ func (a *Signup) Execute(ctx context.Context, input dto.SignupInput) error {
 		return err
 	}
 
-	professional, err := entity.NewProfessional(account.GetID(), establishment.GetID(), input.Name)
+	professional, err := entity.NewProfessional(account.ID(), establishment.ID(), input.Name)
 	if err != nil {
 		return err
 	}

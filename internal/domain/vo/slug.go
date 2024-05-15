@@ -24,6 +24,6 @@ func normalize(value string) string {
 	return re.ReplaceAllString(lowerValue, "")
 }
 
-func (s *Slug) GetValue() string {
+func (s *Slug) Value() string {
 	return s.value
 }

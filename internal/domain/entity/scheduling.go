@@ -20,10 +20,10 @@ func NewScheduling(service *Service, customer *Customer, professional *Professio
 		return nil, err
 	}
 	return &Scheduling{
-		serviceID:       service.GetID(),
-		customerID:      customer.GetID(),
-		professionalID:  professional.GetID(),
-		establishmentID: establishment.GetID(),
+		serviceID:       service.ID(),
+		customerID:      customer.ID(),
+		professionalID:  professional.ID(),
+		establishmentID: establishment.ID(),
 		date:            dateDate,
 		time:            timeTime,
 		createdAt:       time.Now(),
@@ -34,6 +34,6 @@ func (a *Scheduling) SetID(id string) {
 	a.id = id
 }
 
-func (a *Scheduling) GetID() string {
+func (a *Scheduling) ID() string {
 	return a.id
 }

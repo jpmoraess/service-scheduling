@@ -33,7 +33,7 @@ func NewProfessional(accountID, establishmentID, name string) (*Professional, er
 }
 
 func (p *Professional) CanScheduleAtTheSpecifiedDateAndTime(date, time time.Time) error {
-	day := p.GetWorkPlan().GetDayFromWorkPlan(date)
+	day := p.WorkPlan().GetDayFromWorkPlan(date)
 	if day == nil {
 		return fmt.Errorf("professional does not work on the chosen day")
 	}
@@ -41,13 +41,13 @@ func (p *Professional) CanScheduleAtTheSpecifiedDateAndTime(date, time time.Time
 	// TODO: verify professional's break
 
 	// check if the time is within range
-	if day.GetStartTime().Before(day.GetEndTime()) {
-		if (time.Equal(day.GetStartTime()) || time.After(day.GetStartTime())) && (time.Equal(day.GetEndTime()) || time.Before(day.GetEndTime())) {
+	if day.StartTime().Before(day.EndTime()) {
+		if (time.Equal(day.StartTime()) || time.After(day.StartTime())) && (time.Equal(day.EndTime()) || time.Before(day.EndTime())) {
 			return nil
 		}
 	} else {
 		// case where the interval crosses midnight
-		if time.Equal(day.GetStartTime()) || time.After(day.GetStartTime()) || time.Equal(day.GetEndTime()) || time.Before(day.GetEndTime()) {
+		if time.Equal(day.StartTime()) || time.After(day.StartTime()) || time.Equal(day.EndTime()) || time.Before(day.EndTime()) {
 			return nil
 		}
 	}
@@ -59,22 +59,22 @@ func (a *Professional) SetID(id string) {
 	a.id = id
 }
 
-func (a *Professional) GetID() string {
+func (a *Professional) ID() string {
 	return a.id
 }
 
-func (p *Professional) GetAccountID() string {
+func (p *Professional) AccountID() string {
 	return p.accountID
 }
 
-func (p *Professional) GetEstablishmentID() string {
+func (p *Professional) EstablishmentID() string {
 	return p.establishmentID
 }
 
-func (p *Professional) GetName() string {
+func (p *Professional) Name() string {
 	return p.name
 }
 
-func (p *Professional) GetWorkPlan() *vo.WorkPlan {
+func (p *Professional) WorkPlan() *vo.WorkPlan {
 	return p.workPlan
 }

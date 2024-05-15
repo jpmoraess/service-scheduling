@@ -25,13 +25,13 @@ func (f *ListServices) Execute(ctx context.Context, establishmentID string) ([]*
 	var output []*dto.ServiceOutput
 	for _, service := range services {
 		output = append(output, &dto.ServiceOutput{
-			ID:                service.GetID(),
-			EstablishmentID:   service.GetEstablishmentID(),
-			Name:              service.GetName(),
-			Description:       service.GetDescription(),
-			Price:             service.GetPrice().GetAmountFloat64(),
-			DurationInMinutes: int64(service.GetDuration()),
-			Available:         service.GetAvailable(),
+			ID:                service.ID(),
+			EstablishmentID:   service.EstablishmentID(),
+			Name:              service.Name(),
+			Description:       service.Description(),
+			Price:             service.Price().AmountFloat64(),
+			DurationInMinutes: int64(service.Duration()),
+			Available:         service.Available(),
 		})
 	}
 	return output, nil

@@ -31,14 +31,14 @@ func (a *Account) SetID(id string) {
 	a.id = id
 }
 
-func (a *Account) GetID() string {
+func (a *Account) ID() string {
 	return a.id
 }
 
-func (a *Account) GetEmail() string {
+func (a *Account) Email() string {
 	return a.email
 }
 
-func (a *Account) GetEncryptedPassword() string {
+func (a *Account) EncryptedPassword() string {
 	return a.encryptedPassword
 }

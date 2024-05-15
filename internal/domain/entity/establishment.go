@@ -31,6 +31,6 @@ func (a *Establishment) SetID(id string) {
 	a.id = id
 }
 
-func (a *Establishment) GetID() string {
+func (a *Establishment) ID() string {
 	return a.id
 }

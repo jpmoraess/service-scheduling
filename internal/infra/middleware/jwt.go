@@ -29,7 +29,7 @@ func JWTAuth(accountRepository repository.AccountRepository) fiber.Handler {
 		}
 		// set the current authenticated account to the context
 		accountID := claims["id"].(string)
-		account, err := accountRepository.GetAccountByID(c.Context(), accountID)
+		account, err := accountRepository.Get(c.Context(), accountID)
 		if err != nil {
 			return fmt.Errorf("unauthorized")
 		}

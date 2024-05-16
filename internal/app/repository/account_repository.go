@@ -8,6 +8,6 @@ import (
 
 type AccountRepository interface {
 	Save(context.Context, *entity.Account) (*entity.Account, error)
-	GetAccountByID(context.Context, string) (*entity.Account, error)
+	Get(context.Context, string) (*entity.Account, error)
 	GetAccountByEmail(context.Context, string) (*entity.Account, error)
 }

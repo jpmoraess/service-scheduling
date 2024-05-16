@@ -40,7 +40,7 @@ func (a *AccountMongoRepository) Save(ctx context.Context, entity *entity.Accoun
 	return entity, nil
 }
 
-func (a *AccountMongoRepository) GetAccountByID(ctx context.Context, id string) (*entity.Account, error) {
+func (a *AccountMongoRepository) Get(ctx context.Context, id string) (*entity.Account, error) {
 	oid, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return nil, err

@@ -12,11 +12,12 @@ func ToEstablishmentData(entity *entity.Establishment) (*data.EstablishmentData,
 		AccountID: entity.AccountID(),
 		Name:      entity.Name(),
 		Slug:      entity.Slug(),
+		CreatedAt: entity.CreatedAt(),
 	}, nil
 }
 
 func FromEstablishmentData(data *data.EstablishmentData) (*entity.Establishment, error) {
-	establishment, err := entity.RestoreEstablishment(data.ID.Hex(), data.AccountID, data.Name, data.Slug)
+	establishment, err := entity.RestoreEstablishment(data.ID.Hex(), data.AccountID, data.Name, data.Slug, data.CreatedAt)
 	if err != nil {
 		fmt.Println("error to restore establishment from database", err)
 		return nil, err

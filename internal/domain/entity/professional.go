@@ -14,6 +14,7 @@ type Professional struct {
 	name            string
 	workPlan        *vo.WorkPlan
 	active          bool
+	createdAt       time.Time
 }
 
 func NewProfessional(accountID, establishmentID, name string) (*Professional, error) {
@@ -27,10 +28,11 @@ func NewProfessional(accountID, establishmentID, name string) (*Professional, er
 		name:            name,
 		workPlan:        workPlan,
 		active:          true,
+		createdAt:       time.Now(),
 	}, nil
 }
 
-func RestoreProfessional(id, accountID, establishmentID, name string, workPlan *vo.WorkPlan) (*Professional, error) {
+func RestoreProfessional(id, accountID, establishmentID, name string, workPlan *vo.WorkPlan, createdAt time.Time) (*Professional, error) {
 	return &Professional{
 		id:              id,
 		accountID:       accountID,
@@ -38,6 +40,7 @@ func RestoreProfessional(id, accountID, establishmentID, name string, workPlan *
 		name:            name,
 		workPlan:        workPlan,
 		active:          true,
+		createdAt:       createdAt,
 	}, nil
 }
 
@@ -90,4 +93,8 @@ func (p *Professional) WorkPlan() *vo.WorkPlan {
 
 func (p *Professional) Active() bool {
 	return p.active
+}
+
+func (p *Professional) CreatedAt() time.Time {
+	return p.createdAt
 }

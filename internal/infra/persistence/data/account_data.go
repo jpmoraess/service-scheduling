@@ -1,6 +1,10 @@
 package data
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type AccountData struct {
 	ID                primitive.ObjectID `bson:"_id,omitempty"`
@@ -9,4 +13,5 @@ type AccountData struct {
 	Email             string             `bson:"email"`
 	PhoneNumber       string             `bson:"phoneNumber"`
 	EncryptedPassword string             `bson:"encryptedPassword"`
+	CreatedAt         time.Time          `bson:"createdAt"`
 }

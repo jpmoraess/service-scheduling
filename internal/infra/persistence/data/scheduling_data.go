@@ -14,4 +14,5 @@ type SchedulingData struct {
 	EstablishmentID string             `bson:"establishmentID"`
 	Date            time.Time          `bson:"date"`
 	Time            time.Time          `bson:"time"`
+	CreatedAt       time.Time          `bson:"createdAt"`
 }

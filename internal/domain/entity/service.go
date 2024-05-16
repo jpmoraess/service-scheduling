@@ -14,6 +14,7 @@ type Service struct {
 	price           *vo.Money
 	duration        time.Duration
 	available       bool
+	createdAt       time.Time
 }
 
 func NewService(establishmentID, name, description string, price *vo.Money, duration time.Duration, available bool) (*Service, error) {
@@ -24,10 +25,11 @@ func NewService(establishmentID, name, description string, price *vo.Money, dura
 		price:           price,
 		duration:        duration,
 		available:       available,
+		createdAt:       time.Now(),
 	}, nil
 }
 
-func RestoreService(id, establishmentID, name, description string, price *vo.Money, duration time.Duration, available bool) (*Service, error) {
+func RestoreService(id, establishmentID, name, description string, price *vo.Money, duration time.Duration, available bool, createdAt time.Time) (*Service, error) {
 	return &Service{
 		id:              id,
 		establishmentID: establishmentID,
@@ -36,6 +38,7 @@ func RestoreService(id, establishmentID, name, description string, price *vo.Mon
 		price:           price,
 		duration:        duration,
 		available:       available,
+		createdAt:       createdAt,
 	}, nil
 }
 
@@ -69,4 +72,8 @@ func (s *Service) Duration() time.Duration {
 
 func (s *Service) Available() bool {
 	return s.available
+}
+
+func (s *Service) CreatedAt() time.Time {
+	return s.createdAt
 }

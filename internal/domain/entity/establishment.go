@@ -1,6 +1,8 @@
 package entity
 
 import (
+	"time"
+
 	"github.com/jpmoraess/service-scheduling/internal/domain/vo"
 )
 
@@ -9,6 +11,7 @@ type Establishment struct {
 	accountID string
 	name      string
 	slug      *vo.Slug
+	createdAt time.Time
 }
 
 func NewEstablishment(accountID, name, slug string) (*Establishment, error) {
@@ -20,10 +23,11 @@ func NewEstablishment(accountID, name, slug string) (*Establishment, error) {
 		accountID: accountID,
 		name:      name,
 		slug:      slugValue,
+		createdAt: time.Now(),
 	}, nil
 }
 
-func RestoreEstablishment(id, accountID, name, slug string) (*Establishment, error) {
+func RestoreEstablishment(id, accountID, name, slug string, createdAt time.Time) (*Establishment, error) {
 	slugValue, err := vo.NewSlug(slug)
 	if err != nil {
 		return nil, err
@@ -33,25 +37,30 @@ func RestoreEstablishment(id, accountID, name, slug string) (*Establishment, err
 		accountID: accountID,
 		name:      name,
 		slug:      slugValue,
+		createdAt: createdAt,
 	}, nil
 }
 
-func (a *Establishment) SetID(id string) {
-	a.id = id
+func (e *Establishment) SetID(id string) {
+	e.id = id
 }
 
-func (a *Establishment) ID() string {
-	return a.id
+func (e *Establishment) ID() string {
+	return e.id
 }
 
-func (a *Establishment) AccountID() string {
-	return a.accountID
+func (e *Establishment) AccountID() string {
+	return e.accountID
 }
 
-func (a *Establishment) Name() string {
-	return a.name
+func (e *Establishment) Name() string {
+	return e.name
 }
 
-func (a *Establishment) Slug() string {
-	return a.slug.Value()
+func (e *Establishment) Slug() string {
+	return e.slug.Value()
+}
+
+func (e *Establishment) CreatedAt() time.Time {
+	return e.createdAt
 }

@@ -34,4 +34,5 @@ type ProfessionalData struct {
 	Name            string             `bson:"name"`
 	WorkPlan        *WorkPlanData      `bson:"workPlan"`
 	Active          bool               `bson:"active"`
+	CreatedAt       time.Time          `bson:"createdAt"`
 }

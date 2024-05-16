@@ -1,6 +1,8 @@
 package entity
 
 import (
+	"time"
+
 	"github.com/jpmoraess/service-scheduling/internal/domain/vo"
 )
 
@@ -11,6 +13,7 @@ type Account struct {
 	email             string
 	phoneNumber       string
 	encryptedPassword string
+	createdAt         time.Time
 }
 
 func NewAccount(accountType vo.AccountType, name, email, phoneNumber, encryptedPassword string) (*Account, error) {
@@ -20,10 +23,11 @@ func NewAccount(accountType vo.AccountType, name, email, phoneNumber, encryptedP
 		email:             email,
 		phoneNumber:       phoneNumber,
 		encryptedPassword: encryptedPassword,
+		createdAt:         time.Now(),
 	}, nil
 }
 
-func RestoreAccount(id string, accountType vo.AccountType, name, email, phoneNumber, encryptedPassword string) (*Account, error) {
+func RestoreAccount(id string, accountType vo.AccountType, name, email, phoneNumber, encryptedPassword string, createdAt time.Time) (*Account, error) {
 	return &Account{
 		id:                id,
 		accountType:       accountType,
@@ -55,4 +59,8 @@ func (a *Account) PhoneNumber() string {
 
 func (a *Account) EncryptedPassword() string {
 	return a.encryptedPassword
+}
+
+func (a *Account) CreatedAt() time.Time {
+	return a.createdAt
 }

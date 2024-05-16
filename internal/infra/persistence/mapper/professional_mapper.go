@@ -160,6 +160,7 @@ func ToProfessionalData(professional *entity.Professional) (*data.ProfessionalDa
 		Name:            professional.Name(),
 		WorkPlan:        workplanData,
 		Active:          professional.Active(),
+		CreatedAt:       professional.CreatedAt(),
 	}, nil
 }
 
@@ -168,7 +169,7 @@ func FromProfessionalData(data *data.ProfessionalData) (*entity.Professional, er
 	if err != nil {
 		return nil, err
 	}
-	professional, err := entity.RestoreProfessional(data.ID.Hex(), data.AccountID, data.EstablishmentID, data.Name, workPlan)
+	professional, err := entity.RestoreProfessional(data.ID.Hex(), data.AccountID, data.EstablishmentID, data.Name, workPlan, data.CreatedAt)
 	if err != nil {
 		fmt.Println("error to restore professional from database", err)
 		return nil, err

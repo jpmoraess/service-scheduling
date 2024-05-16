@@ -12,9 +12,10 @@ type Scheduling struct {
 	establishmentID string
 	date            time.Time
 	time            time.Time
+	createdAt       time.Time
 }
 
-func NewScheduling(serviceID string, customerID string, professionalID string, establishmentID string, dateDate time.Time, timeTime time.Time) (*Scheduling, error) {
+func NewScheduling(serviceID, customerID, professionalID, establishmentID string, dateDate, timeTime time.Time) (*Scheduling, error) {
 	return &Scheduling{
 		serviceID:       serviceID,
 		customerID:      customerID,
@@ -22,10 +23,11 @@ func NewScheduling(serviceID string, customerID string, professionalID string, e
 		establishmentID: establishmentID,
 		date:            dateDate,
 		time:            timeTime,
+		createdAt:       time.Now(),
 	}, nil
 }
 
-func RestoreScheduling(id string, serviceID string, customerID string, professionalID string, establishmentID string, dateDate time.Time, timeTime time.Time) (*Scheduling, error) {
+func RestoreScheduling(id, serviceID, customerID, professionalID, establishmentID string, dateDate, timeTime, createdAt time.Time) (*Scheduling, error) {
 	return &Scheduling{
 		id:              id,
 		serviceID:       serviceID,
@@ -34,37 +36,42 @@ func RestoreScheduling(id string, serviceID string, customerID string, professio
 		establishmentID: establishmentID,
 		date:            dateDate,
 		time:            timeTime,
+		createdAt:       createdAt,
 	}, nil
 }
 
-func (a *Scheduling) SetID(id string) {
-	a.id = id
+func (s *Scheduling) SetID(id string) {
+	s.id = id
 }
 
-func (a *Scheduling) ID() string {
-	return a.id
+func (s *Scheduling) ID() string {
+	return s.id
 }
 
-func (a *Scheduling) ServiceID() string {
-	return a.serviceID
+func (s *Scheduling) ServiceID() string {
+	return s.serviceID
 }
 
-func (a *Scheduling) CustomerID() string {
-	return a.customerID
+func (s *Scheduling) CustomerID() string {
+	return s.customerID
 }
 
-func (a *Scheduling) ProfessionalID() string {
-	return a.professionalID
+func (s *Scheduling) ProfessionalID() string {
+	return s.professionalID
 }
 
-func (a *Scheduling) EstablishmentID() string {
-	return a.establishmentID
+func (s *Scheduling) EstablishmentID() string {
+	return s.establishmentID
 }
 
-func (a *Scheduling) Date() time.Time {
-	return a.date
+func (s *Scheduling) Date() time.Time {
+	return s.date
 }
 
-func (a *Scheduling) Time() time.Time {
-	return a.time
+func (s *Scheduling) Time() time.Time {
+	return s.time
+}
+
+func (s *Scheduling) CreatedAt() time.Time {
+	return s.time
 }

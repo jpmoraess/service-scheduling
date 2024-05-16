@@ -20,7 +20,7 @@ func ToServiceData(service *entity.Service) (*data.ServiceData, error) {
 }
 
 func FromServiceData(data *data.ServiceData) (*entity.Service, error) {
-	service, err := entity.RestoreService(data.ID.Hex(), data.EstablishmentID, data.Name, data.Description, vo.NewMoney(data.Price), data.Duration, data.Available)
+	service, err := entity.RestoreService(data.ID.Hex(), data.EstablishmentID, data.Name, data.Description, vo.NewMoney(data.Price), data.Duration, data.Available, data.CreatedAt)
 	if err != nil {
 		fmt.Println("error to restore service from database", err)
 		return nil, err

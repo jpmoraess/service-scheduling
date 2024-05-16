@@ -13,11 +13,12 @@ func ToCustomerData(entity *entity.Customer) (*data.CustomerData, error) {
 		Name:            entity.Name(),
 		PhoneNumber:     entity.PhoneNumber(),
 		Email:           entity.Email(),
+		CreatedAt:       entity.CreatedAt(),
 	}, nil
 }
 
 func FromCustomerData(data *data.CustomerData) (*entity.Customer, error) {
-	customer, err := entity.RestoreCustomer(data.ID.Hex(), data.EstablishmentID, data.Name, data.PhoneNumber, data.Email)
+	customer, err := entity.RestoreCustomer(data.ID.Hex(), data.EstablishmentID, data.Name, data.PhoneNumber, data.Email, data.CreatedAt)
 	if err != nil {
 		fmt.Println("error to restore customer from database", err)
 		return nil, err

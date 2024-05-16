@@ -14,4 +14,5 @@ type ServiceData struct {
 	Price           float64            `bson:"price"`
 	Duration        time.Duration      `bson:"duration"`
 	Available       bool               `bson:"available"`
+	CreatedAt       time.Time          `bson:"createdAt"`
 }

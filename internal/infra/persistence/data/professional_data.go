@@ -29,8 +29,8 @@ type WorkPlanData struct {
 
 type ProfessionalData struct {
 	ID              primitive.ObjectID `bson:"_id,omitempty"`
-	AccountID       string             `bson:"accountID"`
-	EstablishmentID string             `bson:"establishmentID"`
+	AccountID       primitive.ObjectID `bson:"accountID"`
+	EstablishmentID primitive.ObjectID `bson:"establishmentID"`
 	Name            string             `bson:"name"`
 	WorkPlan        *WorkPlanData      `bson:"workPlan"`
 	Active          bool               `bson:"active"`

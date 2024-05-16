@@ -8,7 +8,7 @@ import (
 
 type EstablishmentData struct {
 	ID        primitive.ObjectID `bson:"_id,omitempty"`
-	AccountID string             `bson:"accountID"`
+	AccountID primitive.ObjectID `bson:"accountID"`
 	Name      string             `bson:"name"`
 	Slug      string             `bson:"slug"`
 	CreatedAt time.Time          `bson:"createdAt"`

@@ -27,10 +27,14 @@ func NewAccount(accountType vo.AccountType, name, email, phoneNumber, encryptedP
 	}, nil
 }
 
-func RestoreAccount(id string, accountType vo.AccountType, name, email, phoneNumber, encryptedPassword string, createdAt time.Time) (*Account, error) {
+func RestoreAccount(id string, accountType int, name, email, phoneNumber, encryptedPassword string, createdAt time.Time) (*Account, error) {
+	accountTypeValue, err := vo.AccountTypeFromInt(accountType)
+	if err != nil {
+		return nil, err
+	}
 	return &Account{
 		id:                id,
-		accountType:       accountType,
+		accountType:       accountTypeValue,
 		name:              name,
 		email:             email,
 		phoneNumber:       phoneNumber,
@@ -43,6 +47,10 @@ func (a *Account) SetID(id string) {
 
 func (a *Account) ID() string {
 	return a.id
+}
+
+func (a *Account) AccountType() vo.AccountType {
+	return a.accountType
 }
 
 func (a *Account) Name() string {

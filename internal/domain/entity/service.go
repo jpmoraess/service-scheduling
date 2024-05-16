@@ -29,13 +29,14 @@ func NewService(establishmentID, name, description string, price *vo.Money, dura
 	}, nil
 }
 
-func RestoreService(id, establishmentID, name, description string, price *vo.Money, duration time.Duration, available bool, createdAt time.Time) (*Service, error) {
+func RestoreService(id, establishmentID, name, description string, price float64, duration time.Duration, available bool, createdAt time.Time) (*Service, error) {
+	priceValue := vo.NewMoney(price)
 	return &Service{
 		id:              id,
 		establishmentID: establishmentID,
 		name:            name,
 		description:     description,
-		price:           price,
+		price:           priceValue,
 		duration:        duration,
 		available:       available,
 		createdAt:       createdAt,

@@ -8,8 +8,12 @@ import (
 )
 
 func ToEstablishmentData(entity *entity.Establishment) (*data.EstablishmentData, error) {
+	accountID, err := ObjectIDFromString(entity.AccountID())
+	if err != nil {
+		return nil, err
+	}
 	return &data.EstablishmentData{
-		AccountID: entity.AccountID(),
+		AccountID: accountID,
 		Name:      entity.Name(),
 		Slug:      entity.Slug(),
 		CreatedAt: entity.CreatedAt(),
@@ -17,7 +21,7 @@ func ToEstablishmentData(entity *entity.Establishment) (*data.EstablishmentData,
 }
 
 func FromEstablishmentData(data *data.EstablishmentData) (*entity.Establishment, error) {
-	establishment, err := entity.RestoreEstablishment(data.ID.Hex(), data.AccountID, data.Name, data.Slug, data.CreatedAt)
+	establishment, err := entity.RestoreEstablishment(data.ID.Hex(), data.AccountID.Hex(), data.Name, data.Slug, data.CreatedAt)
 	if err != nil {
 		fmt.Println("error to restore establishment from database", err)
 		return nil, err

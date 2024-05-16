@@ -8,7 +8,7 @@ import (
 
 type ServiceData struct {
 	ID              primitive.ObjectID `bson:"_id,omitempty"`
-	EstablishmentID string             `bson:"establishmentID"`
+	EstablishmentID primitive.ObjectID `bson:"establishmentID"`
 	Name            string             `bson:"name"`
 	Description     string             `bson:"description"`
 	Price           float64            `bson:"price"`

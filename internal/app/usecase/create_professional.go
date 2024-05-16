@@ -29,6 +29,11 @@ func NewCreateProfessional(
 	}
 }
 
+/**
+	1. Validar e-mail e telefone do profissional cadastrado
+	2. Enviar e-mail para profissional cadastrar sua senha e baixar o app
+**/
+
 func (c *CreateProfessional) Execute(ctx context.Context, input dto.CreateProfessionalInput) error {
 	authData, err := getAuthData(ctx)
 	if err != nil {

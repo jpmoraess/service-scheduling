@@ -8,11 +8,11 @@ import (
 
 type SchedulingData struct {
 	ID              primitive.ObjectID `bson:"_id,omitempty"`
-	ServiceID       string             `bson:"serviceID"`
-	CustomerID      string             `bson:"customerID"`
-	ProfessionalID  string             `bson:"professionalID"`
-	EstablishmentID string             `bson:"establishmentID"`
-	Date            time.Time          `bson:"date"`
-	Time            time.Time          `bson:"time"`
+	ServiceID       primitive.ObjectID `bson:"serviceID"`
+	CustomerID      primitive.ObjectID `bson:"customerID"`
+	ProfessionalID  primitive.ObjectID `bson:"professionalID"`
+	EstablishmentID primitive.ObjectID `bson:"establishmentID"`
+	Date            string             `bson:"date"`
+	Time            string             `bson:"time"`
 	CreatedAt       time.Time          `bson:"createdAt"`
 }

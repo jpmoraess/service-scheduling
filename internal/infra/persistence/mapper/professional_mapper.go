@@ -154,9 +154,17 @@ func ToProfessionalData(professional *entity.Professional) (*data.ProfessionalDa
 	if err != nil {
 		return nil, err
 	}
+	accountID, err := ObjectIDFromString(professional.AccountID())
+	if err != nil {
+		return nil, err
+	}
+	establishmentID, err := ObjectIDFromString(professional.EstablishmentID())
+	if err != nil {
+		return nil, err
+	}
 	return &data.ProfessionalData{
-		AccountID:       professional.AccountID(),
-		EstablishmentID: professional.EstablishmentID(),
+		AccountID:       accountID,
+		EstablishmentID: establishmentID,
 		Name:            professional.Name(),
 		WorkPlan:        workplanData,
 		Active:          professional.Active(),
@@ -169,7 +177,7 @@ func FromProfessionalData(data *data.ProfessionalData) (*entity.Professional, er
 	if err != nil {
 		return nil, err
 	}
-	professional, err := entity.RestoreProfessional(data.ID.Hex(), data.AccountID, data.EstablishmentID, data.Name, workPlan, data.CreatedAt)
+	professional, err := entity.RestoreProfessional(data.ID.Hex(), data.AccountID.Hex(), data.EstablishmentID.Hex(), data.Name, workPlan, data.CreatedAt)
 	if err != nil {
 		fmt.Println("error to restore professional from database", err)
 		return nil, err

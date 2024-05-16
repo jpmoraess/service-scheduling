@@ -8,8 +8,13 @@ import (
 )
 
 func ToCustomerData(entity *entity.Customer) (*data.CustomerData, error) {
+	establishmentID, err := ObjectIDFromString(entity.EstablishmentID())
+	if err != nil {
+		return nil, err
+	}
+
 	return &data.CustomerData{
-		EstablishmentID: entity.EstablishmentID(),
+		EstablishmentID: establishmentID,
 		Name:            entity.Name(),
 		PhoneNumber:     entity.PhoneNumber(),
 		Email:           entity.Email(),
@@ -18,7 +23,7 @@ func ToCustomerData(entity *entity.Customer) (*data.CustomerData, error) {
 }
 
 func FromCustomerData(data *data.CustomerData) (*entity.Customer, error) {
-	customer, err := entity.RestoreCustomer(data.ID.Hex(), data.EstablishmentID, data.Name, data.PhoneNumber, data.Email, data.CreatedAt)
+	customer, err := entity.RestoreCustomer(data.ID.Hex(), data.EstablishmentID.Hex(), data.Name, data.PhoneNumber, data.Email, data.CreatedAt)
 	if err != nil {
 		fmt.Println("error to restore customer from database", err)
 		return nil, err

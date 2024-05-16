@@ -8,7 +8,7 @@ import (
 
 type CustomerData struct {
 	ID              primitive.ObjectID `bson:"_id,omitempty"`
-	EstablishmentID string             `bson:"establishmentID"`
+	EstablishmentID primitive.ObjectID `bson:"establishmentID"`
 	Name            string             `bson:"name" json:"name"`
 	PhoneNumber     string             `bson:"phoneNumber"`
 	Email           string             `bson:"email"`

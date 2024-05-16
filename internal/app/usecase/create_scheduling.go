@@ -34,23 +34,12 @@ func NewCreateScheduling(
 }
 
 func (c *CreateScheduling) Execute(ctx context.Context, input dto.CreateSchedulingInput) error {
-	// TODO: remover os parses de data daqui, utilizar value object??
-	date, err := parseDateTime(input.Date, "2006-01-02")
-	if err != nil {
-		return err
-	}
-
-	time, err := parseDateTime(input.Time, "15:04")
-	if err != nil {
-		return err
-	}
-
 	resp, err := c.getData(ctx, input)
 	if err != nil {
 		return err
 	}
 
-	scheduling, err := entity.NewScheduling(resp.service.ID(), resp.customer.ID(), resp.professional.ID(), resp.establishment.ID(), date, time)
+	scheduling, err := entity.NewScheduling(resp.service.ID(), resp.customer.ID(), resp.professional.ID(), resp.establishment.ID(), input.Date, input.Time)
 	if err != nil {
 		return err
 	}

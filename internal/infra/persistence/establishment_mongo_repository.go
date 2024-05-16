@@ -66,8 +66,12 @@ func (e *EstablishmentMongoRepository) GetBySlug(ctx context.Context, slug strin
 }
 
 func (e *EstablishmentMongoRepository) GetByAccountID(ctx context.Context, accountID string) (*entity.Establishment, error) {
+	accountOID, err := primitive.ObjectIDFromHex(accountID)
+	if err != nil {
+		return nil, err
+	}
 	var establishmentData data.EstablishmentData
-	if err := e.coll.FindOne(ctx, bson.M{"accountID": accountID}).Decode(&establishmentData); err != nil {
+	if err := e.coll.FindOne(ctx, bson.M{"accountID": accountOID}).Decode(&establishmentData); err != nil {
 		return nil, err
 	}
 	establishment, err := mapper.FromEstablishmentData(&establishmentData)

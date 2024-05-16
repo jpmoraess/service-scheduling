@@ -22,7 +22,18 @@ func (at AccountType) String() string {
 	}
 }
 
-func ParseAccountTypeFromString(s string) (AccountType, error) {
+func (at AccountType) Int() int {
+	switch at {
+	case OwnerType:
+		return 1
+	case ProfessionalType:
+		return 2
+	default:
+		return -1
+	}
+}
+
+func AccountTypeFromString(s string) (AccountType, error) {
 	switch s {
 	case "OwnerType":
 		return OwnerType, nil
@@ -33,8 +44,8 @@ func ParseAccountTypeFromString(s string) (AccountType, error) {
 	}
 }
 
-func ParseAccountTypeFromInt(s int) (AccountType, error) {
-	switch s {
+func AccountTypeFromInt(i int) (AccountType, error) {
+	switch i {
 	case 1:
 		return OwnerType, nil
 	case 2:

@@ -7,7 +7,6 @@ import (
 	"github.com/jpmoraess/service-scheduling/internal/app/repository"
 	"github.com/jpmoraess/service-scheduling/internal/domain/entity"
 	"github.com/jpmoraess/service-scheduling/internal/domain/vo"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type Signup struct {
@@ -30,12 +29,7 @@ func NewSignup(
 
 func (a *Signup) Execute(ctx context.Context, input dto.SignupInput) error {
 	// TODO: validate duplicated e-mail, phone and slug (2PC)
-	encpw, err := bcrypt.GenerateFromPassword([]byte(input.Password), 12)
-	if err != nil {
-		return err
-	}
-
-	account, err := entity.NewAccount(vo.OwnerType, input.Name, input.Email, input.PhoneNumber, string(encpw))
+	account, err := entity.NewAccount(vo.OwnerType, input.Name, input.Email, input.PhoneNumber, input.Password)
 	if err != nil {
 		return err
 	}

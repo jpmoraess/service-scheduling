@@ -16,13 +16,17 @@ type Account struct {
 	createdAt         time.Time
 }
 
-func NewAccount(accountType vo.AccountType, name, email, phoneNumber, encryptedPassword string) (*Account, error) {
+func NewAccount(accountType vo.AccountType, name, email, phoneNumber, password string) (*Account, error) {
+	pw, err := vo.NewPassword(password)
+	if err != nil {
+		return nil, err
+	}
 	return &Account{
 		accountType:       accountType,
 		name:              name,
 		email:             email,
 		phoneNumber:       phoneNumber,
-		encryptedPassword: encryptedPassword,
+		encryptedPassword: pw.EncryptedPassword(),
 		createdAt:         time.Now(),
 	}, nil
 }
@@ -41,6 +45,16 @@ func RestoreAccount(id string, accountType int, name, email, phoneNumber, encryp
 		encryptedPassword: encryptedPassword,
 	}, nil
 }
+
+func (a *Account) ResetPassword(newPassword string) error {
+	pw, err := vo.NewPassword(newPassword)
+	if err != nil {
+		return err
+	}
+	a.encryptedPassword = pw.EncryptedPassword()
+	return nil
+}
+
 func (a *Account) SetID(id string) {
 	a.id = id
 }

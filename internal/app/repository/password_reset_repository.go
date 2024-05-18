@@ -8,4 +8,5 @@ import (
 
 type PasswordResetRepository interface {
 	Save(context.Context, *entity.PasswordReset) error
+	FindByToken(context.Context, string) (*entity.PasswordReset, error)
 }

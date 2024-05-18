@@ -6,7 +6,9 @@ import (
 
 	"github.com/jpmoraess/service-scheduling/configs"
 	"github.com/jpmoraess/service-scheduling/internal/domain/entity"
+	"github.com/jpmoraess/service-scheduling/internal/infra/persistence/data"
 	"github.com/jpmoraess/service-scheduling/internal/infra/persistence/mapper"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -33,6 +35,18 @@ func (p *PasswordResetMongoRepository) Save(ctx context.Context, entity *entity.
 	if err != nil {
 		return err
 	}
-	fmt.Println("password token inserted: ", res.InsertedID.(primitive.ObjectID).Hex())
+	fmt.Println("password token inserted with id: ", res.InsertedID.(primitive.ObjectID).Hex())
 	return nil
+}
+
+func (p *PasswordResetMongoRepository) FindByToken(ctx context.Context, token string) (*entity.PasswordReset, error) {
+	var passwordResetData data.PasswordResetData
+	if err := p.coll.FindOne(ctx, bson.M{"token": token}).Decode(&passwordResetData); err != nil {
+		return nil, err
+	}
+	passwordReset, err := mapper.FromPasswordResetData(&passwordResetData)
+	if err != nil {
+		return nil, err
+	}
+	return passwordReset, nil
 }

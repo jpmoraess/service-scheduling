@@ -43,6 +43,7 @@ func main() {
 		createCustomer       = usecase.NewCreateCustomer(customerRepository, establishmentRepository)
 		createScheduling     = usecase.NewCreateScheduling(serviceRepository, customerRepository, professionalRepository, establishmentRepository, schedulingRepository)
 		requestPasswordReset = usecase.NewRequestPasswordReset(accountRepository, passwordResetRepository)
+		resetPassword        = usecase.NewResetPassword(accountRepository, passwordResetRepository)
 
 		// handlers initialization
 		authHandler          = handlers.NewAuthHandler(signup, signin)
@@ -50,7 +51,7 @@ func main() {
 		professionalHandler  = handlers.NewProfessionalHandler(createProfessional, getProfessional)
 		customerHandler      = handlers.NewCustomerHandler(createCustomer)
 		schedulingHandler    = handlers.NewSchedulingHandler(createScheduling)
-		passwordResetHandler = handlers.NewPasswordResetHandler(requestPasswordReset)
+		passwordResetHandler = handlers.NewPasswordResetHandler(resetPassword, requestPasswordReset)
 
 		// http server initialization
 		app  = fiber.New()
@@ -62,6 +63,7 @@ func main() {
 	auth.Post("/signup", authHandler.HandleSignup)
 	auth.Post("/signin", authHandler.HandleSignin)
 	auth.Post("/request-password-reset", passwordResetHandler.HandleRequestPasswordReset)
+	auth.Post("/reset-password", passwordResetHandler.HandleResetPassword)
 
 	api.Post("/service", serviceHandler.HandleCreateService)
 	api.Get("/service", serviceHandler.HandleListServicesByEstablishment)

@@ -5,22 +5,23 @@ import (
 
 	"github.com/jpmoraess/service-scheduling/internal/domain/entity"
 	"github.com/jpmoraess/service-scheduling/internal/infra/persistence/data"
+	"github.com/jpmoraess/service-scheduling/internal/infra/persistence/util"
 )
 
 func ToSchedulingData(scheduling *entity.Scheduling) (*data.SchedulingData, error) {
-	serviceID, err := ObjectIDFromString(scheduling.ServiceID())
+	serviceID, err := util.GetObjectID(scheduling.ServiceID())
 	if err != nil {
 		return nil, err
 	}
-	customerID, err := ObjectIDFromString(scheduling.CustomerID())
+	customerID, err := util.GetObjectID(scheduling.CustomerID())
 	if err != nil {
 		return nil, err
 	}
-	professionalID, err := ObjectIDFromString(scheduling.ProfessionalID())
+	professionalID, err := util.GetObjectID(scheduling.ProfessionalID())
 	if err != nil {
 		return nil, err
 	}
-	establishmentID, err := ObjectIDFromString(scheduling.EstablishmentID())
+	establishmentID, err := util.GetObjectID(scheduling.EstablishmentID())
 	if err != nil {
 		return nil, err
 	}

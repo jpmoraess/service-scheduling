@@ -3,10 +3,11 @@ package mapper
 import (
 	"github.com/jpmoraess/service-scheduling/internal/domain/entity"
 	"github.com/jpmoraess/service-scheduling/internal/infra/persistence/data"
+	"github.com/jpmoraess/service-scheduling/internal/infra/persistence/util"
 )
 
 func ToPasswordResetData(entity *entity.PasswordReset) (*data.PasswordResetData, error) {
-	accountID, err := ObjectIDFromString(entity.AccountID())
+	accountID, err := util.GetObjectID(entity.AccountID())
 	if err != nil {
 		return nil, err
 	}

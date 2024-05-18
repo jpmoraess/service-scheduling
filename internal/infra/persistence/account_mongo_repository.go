@@ -8,9 +8,11 @@ import (
 	"github.com/jpmoraess/service-scheduling/internal/domain/entity"
 	"github.com/jpmoraess/service-scheduling/internal/infra/persistence/data"
 	"github.com/jpmoraess/service-scheduling/internal/infra/persistence/mapper"
+	"github.com/jpmoraess/service-scheduling/internal/infra/persistence/util"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type AccountMongoRepository struct {
@@ -31,17 +33,35 @@ func (a *AccountMongoRepository) Save(ctx context.Context, entity *entity.Accoun
 		fmt.Println("error parse account data from entity", err)
 		return nil, err
 	}
-	res, err := a.coll.InsertOne(ctx, accountData)
+
+	oid, err := util.GetObjectID(entity.ID())
 	if err != nil {
-		fmt.Println("error to insert account data into database", err)
 		return nil, err
 	}
-	entity.SetID(res.InsertedID.(primitive.ObjectID).Hex())
+	if oid != primitive.NilObjectID {
+		accountData.ID = oid
+	} else {
+		accountData.ID = primitive.NewObjectID()
+	}
+
+	filter := bson.M{"_id": accountData.ID}
+	update := bson.M{"$set": accountData}
+	opts := options.Update().SetUpsert(true)
+
+	res, err := a.coll.UpdateOne(ctx, filter, update, opts)
+	if err != nil {
+		fmt.Println("error to upsert account data into database")
+		return nil, err
+	}
+
+	if res.UpsertedID != nil {
+		entity.SetID(res.UpsertedID.(primitive.ObjectID).Hex())
+	}
 	return entity, nil
 }
 
 func (a *AccountMongoRepository) Get(ctx context.Context, id string) (*entity.Account, error) {
-	oid, err := primitive.ObjectIDFromHex(id)
+	oid, err := util.GetObjectID(id)
 	if err != nil {
 		return nil, err
 	}

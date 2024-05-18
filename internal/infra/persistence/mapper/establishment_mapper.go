@@ -5,10 +5,11 @@ import (
 
 	"github.com/jpmoraess/service-scheduling/internal/domain/entity"
 	"github.com/jpmoraess/service-scheduling/internal/infra/persistence/data"
+	"github.com/jpmoraess/service-scheduling/internal/infra/persistence/util"
 )
 
 func ToEstablishmentData(entity *entity.Establishment) (*data.EstablishmentData, error) {
-	accountID, err := ObjectIDFromString(entity.AccountID())
+	accountID, err := util.GetObjectID(entity.AccountID())
 	if err != nil {
 		return nil, err
 	}

@@ -7,6 +7,7 @@ import (
 	"github.com/jpmoraess/service-scheduling/internal/domain/entity"
 	"github.com/jpmoraess/service-scheduling/internal/infra/persistence/data"
 	"github.com/jpmoraess/service-scheduling/internal/infra/persistence/mapper"
+	"github.com/jpmoraess/service-scheduling/internal/infra/persistence/util"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -38,10 +39,7 @@ func (s *SchedulingMongoRepository) Save(ctx context.Context, entity *entity.Sch
 }
 
 func (s *SchedulingMongoRepository) Get(ctx context.Context, id string) (*entity.Scheduling, error) {
-	oid, err := primitive.ObjectIDFromHex(id)
-	if err != nil {
-		return nil, err
-	}
+	oid, err := util.GetObjectID(id)
 	var schedulingData data.SchedulingData
 	if err := s.coll.FindOne(ctx, bson.M{"_id": oid}).Decode(&schedulingData); err != nil {
 		return nil, err

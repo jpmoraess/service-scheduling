@@ -1,9 +1,9 @@
 package entity
 
 import (
-	"crypto/rand"
-	"encoding/base64"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type PasswordReset struct {
@@ -22,6 +22,7 @@ func NewPasswordReset(accountID string) (*PasswordReset, error) {
 }
 
 func RestorePasswordReset(id, accountID, token string, expiry time.Time) (*PasswordReset, error) {
+
 	return &PasswordReset{
 		id:        id,
 		accountID: accountID,
@@ -31,9 +32,7 @@ func RestorePasswordReset(id, accountID, token string, expiry time.Time) (*Passw
 }
 
 func generateToken() string {
-	token := make([]byte, 32)
-	rand.Read(token)
-	return base64.StdEncoding.EncodeToString(token)
+	return uuid.New().String()
 }
 
 func (p *PasswordReset) IsExpiryTimeValid() bool {

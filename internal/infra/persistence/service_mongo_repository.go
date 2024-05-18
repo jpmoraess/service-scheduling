@@ -8,6 +8,7 @@ import (
 	"github.com/jpmoraess/service-scheduling/internal/domain/entity"
 	"github.com/jpmoraess/service-scheduling/internal/infra/persistence/data"
 	"github.com/jpmoraess/service-scheduling/internal/infra/persistence/mapper"
+	"github.com/jpmoraess/service-scheduling/internal/infra/persistence/util"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -41,7 +42,7 @@ func (s *ServiceMongoRepository) Save(ctx context.Context, entity *entity.Servic
 }
 
 func (s *ServiceMongoRepository) Get(ctx context.Context, id string) (*entity.Service, error) {
-	oid, err := primitive.ObjectIDFromHex(id)
+	oid, err := util.GetObjectID(id)
 	if err != nil {
 		return nil, err
 	}

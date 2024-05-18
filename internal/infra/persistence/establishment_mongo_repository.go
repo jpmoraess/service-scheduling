@@ -7,6 +7,7 @@ import (
 	"github.com/jpmoraess/service-scheduling/internal/domain/entity"
 	"github.com/jpmoraess/service-scheduling/internal/infra/persistence/data"
 	"github.com/jpmoraess/service-scheduling/internal/infra/persistence/mapper"
+	"github.com/jpmoraess/service-scheduling/internal/infra/persistence/util"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -38,7 +39,7 @@ func (e *EstablishmentMongoRepository) Save(ctx context.Context, entity *entity.
 }
 
 func (e *EstablishmentMongoRepository) Get(ctx context.Context, id string) (*entity.Establishment, error) {
-	oid, err := primitive.ObjectIDFromHex(id)
+	oid, err := util.GetObjectID(id)
 	if err != nil {
 		return nil, err
 	}
@@ -66,12 +67,12 @@ func (e *EstablishmentMongoRepository) GetBySlug(ctx context.Context, slug strin
 }
 
 func (e *EstablishmentMongoRepository) GetByAccountID(ctx context.Context, accountID string) (*entity.Establishment, error) {
-	accountOID, err := primitive.ObjectIDFromHex(accountID)
+	oid, err := util.GetObjectID(accountID)
 	if err != nil {
 		return nil, err
 	}
 	var establishmentData data.EstablishmentData
-	if err := e.coll.FindOne(ctx, bson.M{"accountID": accountOID}).Decode(&establishmentData); err != nil {
+	if err := e.coll.FindOne(ctx, bson.M{"accountID": oid}).Decode(&establishmentData); err != nil {
 		return nil, err
 	}
 	establishment, err := mapper.FromEstablishmentData(&establishmentData)

@@ -5,10 +5,11 @@ import (
 
 	"github.com/jpmoraess/service-scheduling/internal/domain/entity"
 	"github.com/jpmoraess/service-scheduling/internal/infra/persistence/data"
+	"github.com/jpmoraess/service-scheduling/internal/infra/persistence/util"
 )
 
 func ToCustomerData(entity *entity.Customer) (*data.CustomerData, error) {
-	establishmentID, err := ObjectIDFromString(entity.EstablishmentID())
+	establishmentID, err := util.GetObjectID(entity.EstablishmentID())
 	if err != nil {
 		return nil, err
 	}

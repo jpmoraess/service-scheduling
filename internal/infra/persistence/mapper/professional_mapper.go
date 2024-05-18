@@ -6,6 +6,7 @@ import (
 	"github.com/jpmoraess/service-scheduling/internal/domain/entity"
 	"github.com/jpmoraess/service-scheduling/internal/domain/vo"
 	"github.com/jpmoraess/service-scheduling/internal/infra/persistence/data"
+	"github.com/jpmoraess/service-scheduling/internal/infra/persistence/util"
 )
 
 func toBreak(b *data.BreakData) (*vo.Break, error) {
@@ -154,11 +155,11 @@ func ToProfessionalData(professional *entity.Professional) (*data.ProfessionalDa
 	if err != nil {
 		return nil, err
 	}
-	accountID, err := ObjectIDFromString(professional.AccountID())
+	accountID, err := util.GetObjectID(professional.AccountID())
 	if err != nil {
 		return nil, err
 	}
-	establishmentID, err := ObjectIDFromString(professional.EstablishmentID())
+	establishmentID, err := util.GetObjectID(professional.EstablishmentID())
 	if err != nil {
 		return nil, err
 	}

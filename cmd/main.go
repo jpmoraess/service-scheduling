@@ -31,23 +31,26 @@ func main() {
 		schedulingRepository    = persistence.NewSchedulingMongoRepository(client)
 		professionalRepository  = persistence.NewProfessionalMongoRepository(client)
 		establishmentRepository = persistence.NewEstablishmentMongoRepository(client)
+		passwordResetRepository = persistence.NewPasswordResetMongoRepository(client)
 
 		// usecases initialization
-		signup             = usecase.NewSignup(accountRepository, professionalRepository, establishmentRepository)
-		signin             = usecase.NewSignin(accountRepository)
-		createService      = usecase.NewCreateService(serviceRepository, establishmentRepository)
-		findServices       = usecase.NewListServices(serviceRepository)
-		createProfessional = usecase.NewCreateProfessional(accountRepository, professionalRepository, establishmentRepository)
-		getProfessional    = usecase.NewGetProfessional(professionalRepository)
-		createCustomer     = usecase.NewCreateCustomer(customerRepository, establishmentRepository)
-		createScheduling   = usecase.NewCreateScheduling(serviceRepository, customerRepository, professionalRepository, establishmentRepository, schedulingRepository)
+		signup               = usecase.NewSignup(accountRepository, professionalRepository, establishmentRepository)
+		signin               = usecase.NewSignin(accountRepository)
+		createService        = usecase.NewCreateService(serviceRepository, establishmentRepository)
+		findServices         = usecase.NewListServices(serviceRepository)
+		createProfessional   = usecase.NewCreateProfessional(accountRepository, professionalRepository, establishmentRepository)
+		getProfessional      = usecase.NewGetProfessional(professionalRepository)
+		createCustomer       = usecase.NewCreateCustomer(customerRepository, establishmentRepository)
+		createScheduling     = usecase.NewCreateScheduling(serviceRepository, customerRepository, professionalRepository, establishmentRepository, schedulingRepository)
+		requestPasswordReset = usecase.NewRequestPasswordReset(accountRepository, passwordResetRepository)
 
 		// handlers initialization
-		authHandler         = handlers.NewAuthHandler(signup, signin)
-		serviceHandler      = handlers.NewServiceHandler(createService, findServices)
-		professionalHandler = handlers.NewProfessionalHandler(createProfessional, getProfessional)
-		customerHandler     = handlers.NewCustomerHandler(createCustomer)
-		schedulingHandler   = handlers.NewSchedulingHandler(createScheduling)
+		authHandler          = handlers.NewAuthHandler(signup, signin)
+		serviceHandler       = handlers.NewServiceHandler(createService, findServices)
+		professionalHandler  = handlers.NewProfessionalHandler(createProfessional, getProfessional)
+		customerHandler      = handlers.NewCustomerHandler(createCustomer)
+		schedulingHandler    = handlers.NewSchedulingHandler(createScheduling)
+		passwordResetHandler = handlers.NewPasswordResetHandler(requestPasswordReset)
 
 		// http server initialization
 		app  = fiber.New()
@@ -58,6 +61,7 @@ func main() {
 	// auth
 	auth.Post("/signup", authHandler.HandleSignup)
 	auth.Post("/signin", authHandler.HandleSignin)
+	auth.Post("/request-password-reset", passwordResetHandler.HandleRequestPasswordReset)
 
 	api.Post("/service", serviceHandler.HandleCreateService)
 	api.Get("/service", serviceHandler.HandleListServicesByEstablishment)

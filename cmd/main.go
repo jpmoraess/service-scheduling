@@ -5,6 +5,7 @@ import (
 	"flag"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/jpmoraess/service-scheduling/configs"
 	"github.com/jpmoraess/service-scheduling/internal/app/usecase"
 	"github.com/jpmoraess/service-scheduling/internal/infra/handlers"
@@ -58,6 +59,13 @@ func main() {
 		auth = app.Group("/auth")
 		api  = app.Group("/api/v1", middleware.JWTAuth(accountRepository))
 	)
+
+	// cors
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "http://localhost:5173",
+		AllowMethods: "GET,POST,PUT,DELETE",
+		AllowHeaders: "Content-Type,Authorization",
+	}))
 
 	// auth
 	auth.Post("/signup", authHandler.HandleSignup)

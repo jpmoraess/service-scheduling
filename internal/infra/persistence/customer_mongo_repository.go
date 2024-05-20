@@ -11,6 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type CustomerMongoRepository struct {
@@ -68,4 +69,31 @@ func (c *CustomerMongoRepository) GetByEstablishmentIDAndPhoneNumber(ctx context
 		return nil, err
 	}
 	return customer, nil
+}
+
+func (c *CustomerMongoRepository) Find(ctx context.Context, establishmentID string, page int64, size int64) ([]*entity.Customer, error) {
+	establishmentOID, err := util.GetObjectID(establishmentID)
+	if err != nil {
+		return nil, err
+	}
+	opts := options.FindOptions{}
+	opts.SetSkip((page - 1) * size)
+	opts.SetLimit(size)
+	resp, err := c.coll.Find(ctx, bson.M{"establishmentID": establishmentOID}, &opts)
+	if err != nil {
+		return nil, err
+	}
+	var customersData []data.CustomerData
+	if err := resp.All(ctx, &customersData); err != nil {
+		return nil, err
+	}
+	customers := make([]*entity.Customer, 0, len(customersData))
+	for _, customerData := range customersData {
+		customer, err := mapper.FromCustomerData(&customerData)
+		if err != nil {
+			return nil, err
+		}
+		customers = append(customers, customer)
+	}
+	return customers, nil
 }

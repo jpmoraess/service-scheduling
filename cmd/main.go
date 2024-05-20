@@ -42,6 +42,7 @@ func main() {
 		createProfessional   = usecase.NewCreateProfessional(accountRepository, professionalRepository, establishmentRepository)
 		getProfessional      = usecase.NewGetProfessional(professionalRepository)
 		createCustomer       = usecase.NewCreateCustomer(customerRepository, establishmentRepository)
+		findCustomer         = usecase.NewFindCustomer(customerRepository)
 		createScheduling     = usecase.NewCreateScheduling(serviceRepository, customerRepository, professionalRepository, establishmentRepository, schedulingRepository)
 		requestPasswordReset = usecase.NewRequestPasswordReset(accountRepository, passwordResetRepository)
 		resetPassword        = usecase.NewResetPassword(accountRepository, passwordResetRepository)
@@ -50,7 +51,7 @@ func main() {
 		authHandler          = handlers.NewAuthHandler(signup, signin)
 		serviceHandler       = handlers.NewServiceHandler(createService, findServices)
 		professionalHandler  = handlers.NewProfessionalHandler(createProfessional, getProfessional)
-		customerHandler      = handlers.NewCustomerHandler(createCustomer)
+		customerHandler      = handlers.NewCustomerHandler(createCustomer, findCustomer)
 		schedulingHandler    = handlers.NewSchedulingHandler(createScheduling)
 		passwordResetHandler = handlers.NewPasswordResetHandler(resetPassword, requestPasswordReset)
 
@@ -80,6 +81,7 @@ func main() {
 	api.Get("/professional/:id", professionalHandler.HandleGetProfessional)
 
 	api.Post("/customer", customerHandler.HandleCreateCustomer)
+	api.Get("/customer", customerHandler.HandleFindCustomer)
 
 	api.Post("/scheduling", schedulingHandler.HandleCreateScheduling)
 

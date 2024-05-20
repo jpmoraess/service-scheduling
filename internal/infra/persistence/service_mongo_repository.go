@@ -58,7 +58,11 @@ func (s *ServiceMongoRepository) Get(ctx context.Context, id string) (*entity.Se
 }
 
 func (s *ServiceMongoRepository) FindByEstablishmentID(ctx context.Context, establishmentID string) ([]*entity.Service, error) {
-	resp, err := s.coll.Find(ctx, bson.M{"establishmentID": establishmentID})
+	establishmentOID, err := util.GetObjectID(establishmentID)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := s.coll.Find(ctx, bson.M{"establishmentID": establishmentOID})
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +70,8 @@ func (s *ServiceMongoRepository) FindByEstablishmentID(ctx context.Context, esta
 	if err := resp.All(ctx, &serviceData); err != nil {
 		return nil, err
 	}
-	var services []*entity.Service
+
+	services := make([]*entity.Service, len(serviceData))
 	for _, data := range serviceData {
 		service, err := mapper.FromServiceData(data)
 		if err != nil {

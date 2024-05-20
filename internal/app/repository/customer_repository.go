@@ -10,4 +10,5 @@ type CustomerRepository interface {
 	Save(context.Context, *entity.Customer) (*entity.Customer, error)
 	Get(context.Context, string) (*entity.Customer, error)
 	GetByEstablishmentIDAndPhoneNumber(context.Context, string, string) (*entity.Customer, error)
+	Find(context.Context, string, int64, int64) ([]*entity.Customer, error)
 }

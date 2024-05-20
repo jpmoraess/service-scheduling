@@ -8,11 +8,14 @@ import (
 
 type CustomerHandler struct {
 	createCustomer *usecase.CreateCustomer
+	findCustomer   *usecase.FindCustomer
 }
 
-func NewCustomerHandler(createCustomer *usecase.CreateCustomer) *CustomerHandler {
+func NewCustomerHandler(
+	createCustomer *usecase.CreateCustomer, findCustomer *usecase.FindCustomer) *CustomerHandler {
 	return &CustomerHandler{
 		createCustomer: createCustomer,
+		findCustomer:   findCustomer,
 	}
 }
 
@@ -25,4 +28,15 @@ func (h *CustomerHandler) HandleCreateCustomer(c *fiber.Ctx) error {
 		return err
 	}
 	return c.Status(fiber.StatusCreated).JSON("customer created successfully")
+}
+
+func (h *CustomerHandler) HandleFindCustomer(c *fiber.Ctx) error {
+	establishmentID := c.Query("establishmentID")
+	page := int64(c.QueryInt("page"))
+	size := int64(c.QueryInt("size"))
+	output, err := h.findCustomer.Execute(c.Context(), establishmentID, page, size)
+	if err != nil {
+		return err
+	}
+	return c.JSON(output)
 }

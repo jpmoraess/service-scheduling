@@ -30,13 +30,12 @@ func NewAccountMongoRepository(client *mongo.Client) *AccountMongoRepository {
 func (a *AccountMongoRepository) Save(ctx context.Context, entity *entity.Account) (*entity.Account, error) {
 	accountData, err := mapper.ToAccountData(entity)
 	if err != nil {
-		fmt.Println("error parse account data from entity", err)
-		return nil, err
+		return nil, fmt.Errorf("failed to parse account data from entity: %w", err)
 	}
 
 	oid, err := util.GetObjectID(entity.ID())
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert account id: %w", err)
 	}
 	if oid != primitive.NilObjectID {
 		accountData.ID = oid
@@ -50,8 +49,7 @@ func (a *AccountMongoRepository) Save(ctx context.Context, entity *entity.Accoun
 
 	res, err := a.coll.UpdateOne(ctx, filter, update, opts)
 	if err != nil {
-		fmt.Println("error to upsert account data into database")
-		return nil, err
+		return nil, fmt.Errorf("failed to upsert account data into database: %w", err)
 	}
 
 	if res.UpsertedID != nil {
@@ -63,15 +61,15 @@ func (a *AccountMongoRepository) Save(ctx context.Context, entity *entity.Accoun
 func (a *AccountMongoRepository) Get(ctx context.Context, id string) (*entity.Account, error) {
 	oid, err := util.GetObjectID(id)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert account id: %w", err)
 	}
 	var accountData data.AccountData
 	if err := a.coll.FindOne(ctx, bson.M{"_id": oid}).Decode(&accountData); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to decode account: %w", err)
 	}
 	account, err := mapper.FromAccountData(&accountData)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to map account data to entity: %w", err)
 	}
 	return account, nil
 }
@@ -79,11 +77,11 @@ func (a *AccountMongoRepository) Get(ctx context.Context, id string) (*entity.Ac
 func (a *AccountMongoRepository) GetAccountByEmail(ctx context.Context, email string) (*entity.Account, error) {
 	var accountData data.AccountData
 	if err := a.coll.FindOne(ctx, bson.M{"email": email}).Decode(&accountData); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to decode account: %w", err)
 	}
 	account, err := mapper.FromAccountData(&accountData)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to map account data to entity: %w", err)
 	}
 	return account, nil
 }

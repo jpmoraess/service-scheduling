@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"log"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -24,66 +25,86 @@ func main() {
 		panic(err)
 	}
 
-	var (
-		// repositores initialization
-		accountRepository       = persistence.NewAccountMongoRepository(client)
-		serviceRepository       = persistence.NewServiceMongoRepository(client)
-		customerRepository      = persistence.NewCustomerMongoRepository(client)
-		schedulingRepository    = persistence.NewSchedulingMongoRepository(client)
-		professionalRepository  = persistence.NewProfessionalMongoRepository(client)
-		establishmentRepository = persistence.NewEstablishmentMongoRepository(client)
-		passwordResetRepository = persistence.NewPasswordResetMongoRepository(client)
+	// initialize repositories
+	accountRepository := persistence.NewAccountMongoRepository(client)
+	serviceRepository := persistence.NewServiceMongoRepository(client)
+	customerRepository := persistence.NewCustomerMongoRepository(client)
+	schedulingRepository := persistence.NewSchedulingMongoRepository(client)
+	professionalRepository := persistence.NewProfessionalMongoRepository(client)
+	establishmentRepository := persistence.NewEstablishmentMongoRepository(client)
+	passwordResetRepository := persistence.NewPasswordResetMongoRepository(client)
 
-		// usecases initialization
-		signup               = usecase.NewSignup(accountRepository, professionalRepository, establishmentRepository)
-		signin               = usecase.NewSignin(accountRepository)
-		createService        = usecase.NewCreateService(serviceRepository, establishmentRepository)
-		findServices         = usecase.NewListServices(serviceRepository)
-		createProfessional   = usecase.NewCreateProfessional(accountRepository, professionalRepository, establishmentRepository)
-		getProfessional      = usecase.NewGetProfessional(professionalRepository)
-		createCustomer       = usecase.NewCreateCustomer(customerRepository, establishmentRepository)
-		findCustomer         = usecase.NewFindCustomer(customerRepository)
-		createScheduling     = usecase.NewCreateScheduling(serviceRepository, customerRepository, professionalRepository, establishmentRepository, schedulingRepository)
-		requestPasswordReset = usecase.NewRequestPasswordReset(accountRepository, passwordResetRepository)
-		resetPassword        = usecase.NewResetPassword(accountRepository, passwordResetRepository)
+	// initialize use cases
+	signup := usecase.NewSignup(accountRepository, professionalRepository, establishmentRepository)
+	signin := usecase.NewSignin(accountRepository)
+	createService := usecase.NewCreateService(serviceRepository, establishmentRepository)
+	findServices := usecase.NewListServices(serviceRepository)
+	createProfessional := usecase.NewCreateProfessional(accountRepository, professionalRepository, establishmentRepository)
+	getProfessional := usecase.NewGetProfessional(professionalRepository)
+	createCustomer := usecase.NewCreateCustomer(customerRepository, establishmentRepository)
+	findCustomer := usecase.NewFindCustomer(customerRepository)
+	createScheduling := usecase.NewCreateScheduling(serviceRepository, customerRepository, professionalRepository, establishmentRepository, schedulingRepository)
+	requestPasswordReset := usecase.NewRequestPasswordReset(accountRepository, passwordResetRepository)
+	resetPassword := usecase.NewResetPassword(accountRepository, passwordResetRepository)
 
-		// handlers initialization
-		authHandler          = handlers.NewAuthHandler(signup, signin)
-		serviceHandler       = handlers.NewServiceHandler(createService, findServices)
-		professionalHandler  = handlers.NewProfessionalHandler(createProfessional, getProfessional)
-		customerHandler      = handlers.NewCustomerHandler(createCustomer, findCustomer)
-		schedulingHandler    = handlers.NewSchedulingHandler(createScheduling)
-		passwordResetHandler = handlers.NewPasswordResetHandler(resetPassword, requestPasswordReset)
+	// initialize handlers
+	authHandler := handlers.NewAuthHandler(signup, signin)
+	serviceHandler := handlers.NewServiceHandler(createService, findServices)
+	professionalHandler := handlers.NewProfessionalHandler(createProfessional, getProfessional)
+	customerHandler := handlers.NewCustomerHandler(createCustomer, findCustomer)
+	schedulingHandler := handlers.NewSchedulingHandler(createScheduling)
+	passwordResetHandler := handlers.NewPasswordResetHandler(resetPassword, requestPasswordReset)
 
-		// http server initialization
-		app  = fiber.New()
-		auth = app.Group("/auth")
-		api  = app.Group("/api/v1", middleware.JWTAuth(accountRepository))
-	)
+	// initialize fiber app
+	app := fiber.New()
 
-	// cors
+	// set up cors
 	app.Use(cors.New(cors.Config{
 		AllowOrigins: "http://localhost:5173",
 		AllowMethods: "GET,POST,PUT,DELETE",
 		AllowHeaders: "Content-Type,Authorization",
 	}))
 
-	// auth
+	// set up routes
+	setupRoutes(app, accountRepository, authHandler, serviceHandler, customerHandler, schedulingHandler, professionalHandler, passwordResetHandler)
+
+	// start server
+	if err := app.Listen(*listenAddr); err != nil {
+		log.Fatalf("failed to start server: %v", err)
+	}
+}
+
+func setupRoutes(
+	app *fiber.App,
+	accountRepository *persistence.AccountMongoRepository,
+	authHandler *handlers.AuthHandler,
+	serviceHandler *handlers.ServiceHandler,
+	customerHandler *handlers.CustomerHandler,
+	schedulingHandler *handlers.SchedulingHandler,
+	professionalHandler *handlers.ProfessionalHandler,
+	passwordResetHandler *handlers.PasswordResetHandler,
+) {
+	auth := app.Group("/auth")
+	api := app.Group("/api/v1", middleware.JWTAuth(accountRepository))
+
+	// auth routes
 	auth.Post("/signup", authHandler.HandleSignup)
 	auth.Post("/signin", authHandler.HandleSignin)
 	auth.Post("/request-password-reset", passwordResetHandler.HandleRequestPasswordReset)
 	auth.Post("/reset-password", passwordResetHandler.HandleResetPassword)
 
+	// service routes
 	api.Post("/service", serviceHandler.HandleCreateService)
 	api.Get("/service", serviceHandler.HandleListServicesByEstablishment)
 
+	// professional routes
 	api.Post("/professional", professionalHandler.HandleCreateProfessional)
 	api.Get("/professional/:id", professionalHandler.HandleGetProfessional)
 
+	// customer routes
 	api.Post("/customer", customerHandler.HandleCreateCustomer)
 	api.Get("/customer", customerHandler.HandleFindCustomer)
 
+	// scheduling routes
 	api.Post("/scheduling", schedulingHandler.HandleCreateScheduling)
-
-	app.Listen(*listenAddr)
 }

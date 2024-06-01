@@ -9,12 +9,17 @@ import (
 type ProfessionalHandler struct {
 	createProfessional *usecase.CreateProfessional
 	getProfessional    *usecase.GetProfessional
+	findProfessional   *usecase.FindProfessional
 }
 
-func NewProfessionalHandler(createProfessional *usecase.CreateProfessional, getProfessional *usecase.GetProfessional) *ProfessionalHandler {
+func NewProfessionalHandler(
+	createProfessional *usecase.CreateProfessional,
+	getProfessional *usecase.GetProfessional,
+	findProfessional *usecase.FindProfessional) *ProfessionalHandler {
 	return &ProfessionalHandler{
 		createProfessional: createProfessional,
 		getProfessional:    getProfessional,
+		findProfessional:   findProfessional,
 	}
 }
 
@@ -31,6 +36,16 @@ func (h *ProfessionalHandler) HandleCreateProfessional(c *fiber.Ctx) error {
 
 func (h *ProfessionalHandler) HandleGetProfessional(c *fiber.Ctx) error {
 	output, err := h.getProfessional.Execute(c.Context(), c.Params("id"))
+	if err != nil {
+		return err
+	}
+	return c.JSON(output)
+}
+
+func (h *ProfessionalHandler) HandleFindProfessional(c *fiber.Ctx) error {
+	page := int64(c.QueryInt("page"))
+	size := int64(c.QueryInt("size"))
+	output, err := h.findProfessional.Execute(c.Context(), page, size)
 	if err != nil {
 		return err
 	}

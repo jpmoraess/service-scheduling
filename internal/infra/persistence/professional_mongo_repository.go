@@ -2,6 +2,7 @@ package persistence
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/jpmoraess/service-scheduling/configs"
 	"github.com/jpmoraess/service-scheduling/internal/domain/entity"
@@ -11,6 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type ProfessionalMongoRepository struct {
@@ -52,4 +54,32 @@ func (p *ProfessionalMongoRepository) Get(ctx context.Context, id string) (*enti
 		return nil, err
 	}
 	return professional, nil
+}
+
+func (p *ProfessionalMongoRepository) Find(ctx context.Context, establishmentID string, page int64, size int64) ([]*entity.Professional, error) {
+	establishmentOID, err := util.GetObjectID(establishmentID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert establishment id: %w", err)
+	}
+	opts := options.FindOptions{}
+	opts.SetSkip((page - 1) * size)
+	opts.SetLimit(size)
+	cur, err := p.coll.Find(ctx, bson.M{"establishmentID": establishmentOID}, &opts)
+	if err != nil {
+		return nil, fmt.Errorf("failed to find professional by establishment id: %w", err)
+	}
+	defer cur.Close(ctx)
+	var professionalsData []data.ProfessionalData
+	if err := cur.All(ctx, &professionalsData); err != nil {
+		return nil, fmt.Errorf("failed to decode professional: %w", err)
+	}
+	professionals := make([]*entity.Professional, 0, len(professionalsData))
+	for _, professionalData := range professionalsData {
+		professional, err := mapper.FromProfessionalData(&professionalData)
+		if err != nil {
+			return nil, fmt.Errorf("failed to map professionl data to entity: %w", err)
+		}
+		professionals = append(professionals, professional)
+	}
+	return professionals, nil
 }

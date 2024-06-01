@@ -31,10 +31,9 @@ func (h *CustomerHandler) HandleCreateCustomer(c *fiber.Ctx) error {
 }
 
 func (h *CustomerHandler) HandleFindCustomer(c *fiber.Ctx) error {
-	establishmentID := c.Query("establishmentID")
 	page := int64(c.QueryInt("page"))
 	size := int64(c.QueryInt("size"))
-	output, err := h.findCustomer.Execute(c.Context(), establishmentID, page, size)
+	output, err := h.findCustomer.Execute(c.Context(), page, size)
 	if err != nil {
 		return err
 	}

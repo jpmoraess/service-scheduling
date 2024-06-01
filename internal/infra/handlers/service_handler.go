@@ -8,13 +8,13 @@ import (
 
 type ServiceHandler struct {
 	createService *usecase.CreateService
-	listServices  *usecase.ListServices
+	findService   *usecase.FindService
 }
 
-func NewServiceHandler(createService *usecase.CreateService, listServices *usecase.ListServices) *ServiceHandler {
+func NewServiceHandler(createService *usecase.CreateService, findService *usecase.FindService) *ServiceHandler {
 	return &ServiceHandler{
 		createService: createService,
-		listServices:  listServices,
+		findService:   findService,
 	}
 }
 
@@ -29,8 +29,8 @@ func (h *ServiceHandler) HandleCreateService(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON("service created successfully")
 }
 
-func (h *ServiceHandler) HandleListServicesByEstablishment(c *fiber.Ctx) error {
-	output, err := h.listServices.Execute(c.Context(), c.Query("establishmentID"))
+func (h *ServiceHandler) HandleFindServiceByEstablishment(c *fiber.Ctx) error {
+	output, err := h.findService.Execute(c.Context(), c.Query("establishmentID"))
 	if err != nil {
 		return err
 	}

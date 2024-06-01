@@ -15,8 +15,12 @@ func NewFindCustomer(customerRepository repository.CustomerRepository) *FindCust
 	return &FindCustomer{customerRepository: customerRepository}
 }
 
-func (f *FindCustomer) Execute(ctx context.Context, establishmentID string, page, size int64) ([]*dto.CustomerOutput, error) {
-	customers, err := f.customerRepository.Find(ctx, establishmentID, page, size)
+func (f *FindCustomer) Execute(ctx context.Context, page, size int64) ([]*dto.CustomerOutput, error) {
+	establishmentData, err := getEstablishmentData(ctx)
+	if err != nil {
+		return nil, err
+	}
+	customers, err := f.customerRepository.Find(ctx, establishmentData.ID(), page, size)
 	if err != nil {
 		return nil, err
 	}

@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/jpmoraess/service-scheduling/internal/app/dto"
 	"github.com/jpmoraess/service-scheduling/internal/app/repository"
@@ -12,21 +11,12 @@ import (
 )
 
 type CreateProfessional struct {
-	accountRepository       repository.AccountRepository
-	professionalRepository  repository.ProfessionalRepository
-	establishmentRepository repository.EstablishmentRepository
+	accountRepository      repository.AccountRepository
+	professionalRepository repository.ProfessionalRepository
 }
 
-func NewCreateProfessional(
-	accountRepository repository.AccountRepository,
-	professionalRepository repository.ProfessionalRepository,
-	establishmentRepository repository.EstablishmentRepository,
-) *CreateProfessional {
-	return &CreateProfessional{
-		accountRepository:       accountRepository,
-		professionalRepository:  professionalRepository,
-		establishmentRepository: establishmentRepository,
-	}
+func NewCreateProfessional(accountRepository repository.AccountRepository, professionalRepository repository.ProfessionalRepository) *CreateProfessional {
+	return &CreateProfessional{accountRepository: accountRepository, professionalRepository: professionalRepository}
 }
 
 /**
@@ -35,14 +25,9 @@ func NewCreateProfessional(
 **/
 
 func (c *CreateProfessional) Execute(ctx context.Context, input dto.CreateProfessionalInput) error {
-	authData, err := getAuthData(ctx)
+	establishmentData, err := getEstablishmentData(ctx)
 	if err != nil {
 		return err
-	}
-
-	establishment, err := c.establishmentRepository.GetByAccountID(ctx, authData.ID())
-	if err != nil {
-		return fmt.Errorf("establishment not found") // TODO: treat error better
 	}
 
 	encpw, err := bcrypt.GenerateFromPassword([]byte(input.Password), 12)
@@ -60,7 +45,7 @@ func (c *CreateProfessional) Execute(ctx context.Context, input dto.CreateProfes
 		return err
 	}
 
-	professional, err := entity.NewProfessional(account.ID(), establishment.ID(), input.Name)
+	professional, err := entity.NewProfessional(account.ID(), establishmentData.ID(), input.Name)
 	if err != nil {
 		return err
 	}

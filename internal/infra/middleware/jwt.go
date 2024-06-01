@@ -3,14 +3,16 @@ package middleware
 import (
 	"fmt"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/jpmoraess/service-scheduling/internal/app/repository"
+	"github.com/jpmoraess/service-scheduling/internal/domain/entity"
 )
 
-func JWTAuth(accountRepository repository.AccountRepository) fiber.Handler {
+func JWTAuth(accountRepository repository.AccountRepository, establishmentRepository repository.EstablishmentRepository) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		token := c.Get("Authorization")
 		if len(token) == 0 {
@@ -27,13 +29,30 @@ func JWTAuth(accountRepository repository.AccountRepository) fiber.Handler {
 		if time.Now().After(expires.Time) {
 			return fmt.Errorf("token expired")
 		}
-		// set the current authenticated account to the context
+		// START: set the current authenticated account and establishment data to the context
 		accountID := claims["id"].(string)
-		account, err := accountRepository.Get(c.Context(), accountID)
-		if err != nil {
+		wg := sync.WaitGroup{}
+		var account *entity.Account
+		var establishment *entity.Establishment
+		var accountErr, establishmentErr error
+
+		wg.Add(2)
+		go func() {
+			defer wg.Done()
+			account, accountErr = accountRepository.Get(c.Context(), accountID)
+		}()
+		go func() {
+			defer wg.Done()
+			establishment, establishmentErr = establishmentRepository.GetByAccountID(c.Context(), accountID)
+		}()
+		wg.Wait()
+
+		if accountErr != nil || establishmentErr != nil {
 			return fmt.Errorf("unauthorized")
 		}
 		c.Context().SetUserValue("account", account)
+		c.Context().SetUserValue("establishment", establishment)
+		// END: set the current authenticated account and establishment data to the context
 		return c.Next()
 	}
 }

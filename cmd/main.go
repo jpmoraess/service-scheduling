@@ -37,20 +37,21 @@ func main() {
 	// initialize use cases
 	signup := usecase.NewSignup(accountRepository, professionalRepository, establishmentRepository)
 	signin := usecase.NewSignin(accountRepository)
-	createService := usecase.NewCreateService(serviceRepository, establishmentRepository)
-	findServices := usecase.NewListServices(serviceRepository)
-	createProfessional := usecase.NewCreateProfessional(accountRepository, professionalRepository, establishmentRepository)
+	createService := usecase.NewCreateService(serviceRepository)
+	findService := usecase.NewFindService(serviceRepository)
+	createProfessional := usecase.NewCreateProfessional(accountRepository, professionalRepository)
 	getProfessional := usecase.NewGetProfessional(professionalRepository)
-	createCustomer := usecase.NewCreateCustomer(customerRepository, establishmentRepository)
+	createCustomer := usecase.NewCreateCustomer(customerRepository)
 	findCustomer := usecase.NewFindCustomer(customerRepository)
+	findProfessional := usecase.NewFindProfessional(professionalRepository)
 	createScheduling := usecase.NewCreateScheduling(serviceRepository, customerRepository, professionalRepository, establishmentRepository, schedulingRepository)
 	requestPasswordReset := usecase.NewRequestPasswordReset(accountRepository, passwordResetRepository)
 	resetPassword := usecase.NewResetPassword(accountRepository, passwordResetRepository)
 
 	// initialize handlers
 	authHandler := handlers.NewAuthHandler(signup, signin)
-	serviceHandler := handlers.NewServiceHandler(createService, findServices)
-	professionalHandler := handlers.NewProfessionalHandler(createProfessional, getProfessional)
+	serviceHandler := handlers.NewServiceHandler(createService, findService)
+	professionalHandler := handlers.NewProfessionalHandler(createProfessional, getProfessional, findProfessional)
 	customerHandler := handlers.NewCustomerHandler(createCustomer, findCustomer)
 	schedulingHandler := handlers.NewSchedulingHandler(createScheduling)
 	passwordResetHandler := handlers.NewPasswordResetHandler(resetPassword, requestPasswordReset)
@@ -66,7 +67,7 @@ func main() {
 	}))
 
 	// set up routes
-	setupRoutes(app, accountRepository, authHandler, serviceHandler, customerHandler, schedulingHandler, professionalHandler, passwordResetHandler)
+	setupRoutes(app, accountRepository, establishmentRepository, authHandler, serviceHandler, customerHandler, schedulingHandler, professionalHandler, passwordResetHandler)
 
 	// start server
 	if err := app.Listen(*listenAddr); err != nil {
@@ -77,6 +78,7 @@ func main() {
 func setupRoutes(
 	app *fiber.App,
 	accountRepository *persistence.AccountMongoRepository,
+	establishmentRepository *persistence.EstablishmentMongoRepository,
 	authHandler *handlers.AuthHandler,
 	serviceHandler *handlers.ServiceHandler,
 	customerHandler *handlers.CustomerHandler,
@@ -85,7 +87,7 @@ func setupRoutes(
 	passwordResetHandler *handlers.PasswordResetHandler,
 ) {
 	auth := app.Group("/auth")
-	api := app.Group("/api/v1", middleware.JWTAuth(accountRepository))
+	api := app.Group("/api/v1", middleware.JWTAuth(accountRepository, establishmentRepository))
 
 	// auth routes
 	auth.Post("/signup", authHandler.HandleSignup)
@@ -95,10 +97,11 @@ func setupRoutes(
 
 	// service routes
 	api.Post("/service", serviceHandler.HandleCreateService)
-	api.Get("/service", serviceHandler.HandleListServicesByEstablishment)
+	api.Get("/service", serviceHandler.HandleFindServiceByEstablishment)
 
 	// professional routes
 	api.Post("/professional", professionalHandler.HandleCreateProfessional)
+	api.Get("/professional", professionalHandler.HandleFindProfessional)
 	api.Get("/professional/:id", professionalHandler.HandleGetProfessional)
 
 	// customer routes

@@ -7,17 +7,17 @@ import (
 	"github.com/jpmoraess/service-scheduling/internal/app/repository"
 )
 
-type ListServices struct {
+type FindService struct {
 	serviceRepository repository.ServiceRepository
 }
 
-func NewListServices(serviceRepository repository.ServiceRepository) *ListServices {
-	return &ListServices{
+func NewFindService(serviceRepository repository.ServiceRepository) *FindService {
+	return &FindService{
 		serviceRepository: serviceRepository,
 	}
 }
 
-func (f *ListServices) Execute(ctx context.Context, establishmentID string) ([]*dto.ServiceOutput, error) {
+func (f *FindService) Execute(ctx context.Context, establishmentID string) ([]*dto.ServiceOutput, error) {
 	services, err := f.serviceRepository.FindByEstablishmentID(ctx, establishmentID)
 	if err != nil {
 		return nil, err

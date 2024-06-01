@@ -7,10 +7,18 @@ import (
 	"github.com/jpmoraess/service-scheduling/internal/domain/entity"
 )
 
-func getAuthData(ctx context.Context) (*entity.Account, error) {
-	authData, ok := ctx.Value("account").(*entity.Account)
+func getAccountData(ctx context.Context) (*entity.Account, error) {
+	accountData, ok := ctx.Value("account").(*entity.Account)
 	if !ok {
 		return nil, fmt.Errorf("unauthorized")
 	}
-	return authData, nil
+	return accountData, nil
+}
+
+func getEstablishmentData(ctx context.Context) (*entity.Establishment, error) {
+	establishmentData, ok := ctx.Value("establishment").(*entity.Establishment)
+	if !ok {
+		return nil, fmt.Errorf("unauthorized")
+	}
+	return establishmentData, nil
 }

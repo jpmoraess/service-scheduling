@@ -12,29 +12,20 @@ import (
 )
 
 type CreateService struct {
-	serviceRepository       repository.ServiceRepository
-	establishmentRepository repository.EstablishmentRepository
+	serviceRepository repository.ServiceRepository
 }
 
-func NewCreateService(serviceRepository repository.ServiceRepository, establishmentRepository repository.EstablishmentRepository) *CreateService {
-	return &CreateService{
-		serviceRepository:       serviceRepository,
-		establishmentRepository: establishmentRepository,
-	}
+func NewCreateService(serviceRepository repository.ServiceRepository) *CreateService {
+	return &CreateService{serviceRepository: serviceRepository}
 }
 
 func (c *CreateService) Execute(ctx context.Context, input dto.CreateServiceInput) error {
-	authData, err := getAuthData(ctx)
+	establishmentData, err := getEstablishmentData(ctx)
 	if err != nil {
 		return err
 	}
 
-	establishment, err := c.establishmentRepository.GetByAccountID(ctx, authData.ID())
-	if err != nil {
-		return fmt.Errorf("establishment not found") // TODO: treat error better
-	}
-
-	service, err := entity.NewService(establishment.ID(), input.Name, input.Description, vo.NewMoney(input.Price), time.Duration(input.DurationInMinutes), true)
+	service, err := entity.NewService(establishmentData.ID(), input.Name, input.Description, vo.NewMoney(input.Price), time.Duration(input.DurationInMinutes), true)
 	if err != nil {
 		return err
 	}

@@ -43,12 +43,12 @@ func RestoreService(id, establishmentID, name, description string, price float64
 	}, nil
 }
 
-func (a *Service) SetID(id string) {
-	a.id = id
+func (s *Service) SetID(id string) {
+	s.id = id
 }
 
-func (a *Service) ID() string {
-	return a.id
+func (s *Service) ID() string {
+	return s.id
 }
 
 func (s *Service) EstablishmentID() string {

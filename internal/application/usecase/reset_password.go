@@ -2,35 +2,38 @@ package usecase
 
 import (
 	"context"
-	"fmt"
-
-	"github.com/jpmoraess/service-scheduling/internal/app/dto"
-	"github.com/jpmoraess/service-scheduling/internal/app/repository"
+	"errors"
+	"github.com/jpmoraess/service-scheduling/internal/application/repository"
 )
 
-type ResetPassword struct {
+type ResetPasswordInputDTO struct {
+	NewPassword        string `json:"newPassword"`
+	ConfirmNewPassword string `json:"confirmNewPassword"`
+}
+
+type ResetPasswordUseCase struct {
 	accountRepository       repository.AccountRepository
 	passwordResetRepository repository.PasswordResetRepository
 }
 
-func NewResetPassword(
+func NewResetPasswordUseCase(
 	accountRepository repository.AccountRepository,
 	passwordResetRepository repository.PasswordResetRepository,
-) *ResetPassword {
-	return &ResetPassword{
+) *ResetPasswordUseCase {
+	return &ResetPasswordUseCase{
 		accountRepository:       accountRepository,
 		passwordResetRepository: passwordResetRepository,
 	}
 }
 
-func (r *ResetPassword) Execute(ctx context.Context, token string, input dto.ResetPasswordInput) error {
+func (r *ResetPasswordUseCase) Execute(ctx context.Context, token string, input ResetPasswordInputDTO) error {
 	passwordReset, err := r.passwordResetRepository.FindByToken(ctx, token)
 	if err != nil {
 		return err
 	}
 
 	if !passwordReset.IsExpiryTimeValid() {
-		return fmt.Errorf("invalid token")
+		return errors.New("expired token")
 	}
 
 	account, err := r.accountRepository.Get(ctx, passwordReset.AccountID())
@@ -46,7 +49,6 @@ func (r *ResetPassword) Execute(ctx context.Context, token string, input dto.Res
 	if err != nil {
 		return err
 	}
-	fmt.Println("password reset successfully: ", account.ID())
 
 	return nil
 }

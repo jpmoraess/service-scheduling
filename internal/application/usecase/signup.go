@@ -3,32 +3,38 @@ package usecase
 import (
 	"context"
 
-	"github.com/jpmoraess/service-scheduling/internal/app/dto"
-	"github.com/jpmoraess/service-scheduling/internal/app/repository"
+	"github.com/jpmoraess/service-scheduling/internal/application/repository"
 	"github.com/jpmoraess/service-scheduling/internal/domain/entity"
 	"github.com/jpmoraess/service-scheduling/internal/domain/vo"
 )
 
-type Signup struct {
+type SignupInputDTO struct {
+	Name              string `json:"name"`
+	EstablishmentName string `json:"establishmentName"`
+	Email             string `json:"email"`
+	PhoneNumber       string `json:"phoneNumber"`
+	Password          string `json:"password"`
+}
+
+type SignupUseCase struct {
 	accountRepository       repository.AccountRepository
 	professionalRepository  repository.ProfessionalRepository
 	establishmentRepository repository.EstablishmentRepository
 }
 
-func NewSignup(
+func NewSignupUseCase(
 	accountRepository repository.AccountRepository,
 	professionalRepository repository.ProfessionalRepository,
 	establishmentRepository repository.EstablishmentRepository,
-) *Signup {
-	return &Signup{
+) *SignupUseCase {
+	return &SignupUseCase{
 		accountRepository:       accountRepository,
 		professionalRepository:  professionalRepository,
 		establishmentRepository: establishmentRepository,
 	}
 }
 
-func (a *Signup) Execute(ctx context.Context, input dto.SignupInput) error {
-	// TODO: validate duplicated e-mail, phone and slug (2PC)
+func (a *SignupUseCase) Execute(ctx context.Context, input SignupInputDTO) error {
 	account, err := entity.NewAccount(vo.OwnerType, input.Name, input.Email, input.PhoneNumber, input.Password)
 	if err != nil {
 		return err

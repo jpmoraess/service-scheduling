@@ -8,7 +8,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/jpmoraess/service-scheduling/internal/app/repository"
+	"github.com/jpmoraess/service-scheduling/internal/application/repository"
 	"github.com/jpmoraess/service-scheduling/internal/domain/entity"
 )
 

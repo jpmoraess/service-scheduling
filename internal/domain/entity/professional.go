@@ -67,12 +67,12 @@ func (p *Professional) CanScheduleAtTheSpecifiedDateAndTime(date, time time.Time
 	return fmt.Errorf("hours outside the professional's scheduling range")
 }
 
-func (a *Professional) SetID(id string) {
-	a.id = id
+func (p *Professional) SetID(id string) {
+	p.id = id
 }
 
-func (a *Professional) ID() string {
-	return a.id
+func (p *Professional) ID() string {
+	return p.id
 }
 
 func (p *Professional) AccountID() string {

@@ -76,7 +76,12 @@ func (p *ProfessionalMongoRepository) Find(ctx context.Context, establishmentID 
 	if err != nil {
 		return nil, fmt.Errorf("failed to find professional by establishment id: %w", err)
 	}
-	defer cur.Close(ctx)
+	defer func(cur *mongo.Cursor, ctx context.Context) {
+		err := cur.Close(ctx)
+		if err != nil {
+
+		}
+	}(cur, ctx)
 	var professionalsData []ProfessionalData
 	if err := cur.All(ctx, &professionalsData); err != nil {
 		return nil, fmt.Errorf("failed to decode professional: %w", err)

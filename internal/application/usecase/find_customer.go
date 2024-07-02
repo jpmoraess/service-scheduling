@@ -32,7 +32,7 @@ func (f *FindCustomerUseCase) Execute(ctx context.Context, page, size int64) ([]
 		return nil, err
 	}
 
-	output := make([]*FindCustomerOutputDTO, len(customers))
+	output := make([]*FindCustomerOutputDTO, 0, len(customers))
 	for _, customer := range customers {
 		output = append(output, &FindCustomerOutputDTO{
 			ID:          customer.ID(),

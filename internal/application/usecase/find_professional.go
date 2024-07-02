@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-
 	"github.com/jpmoraess/service-scheduling/internal/application/repository"
 )
 
@@ -30,7 +29,7 @@ func (f *FindProfessionalUseCase) Execute(ctx context.Context, page, size int64)
 		return nil, err
 	}
 
-	output := make([]*FindProfessionalOutputDTO, len(professionals))
+	output := make([]*FindProfessionalOutputDTO, 0, len(professionals))
 	for _, professional := range professionals {
 		output = append(output, &FindProfessionalOutputDTO{
 			ID:   professional.ID(),

@@ -4,7 +4,6 @@ import (
 	"context"
 	"time"
 
-	"github.com/jpmoraess/service-scheduling/internal/application/dto"
 	"github.com/jpmoraess/service-scheduling/internal/application/repository"
 	"github.com/jpmoraess/service-scheduling/internal/domain/entity"
 	"github.com/jpmoraess/service-scheduling/internal/domain/vo"
@@ -29,7 +28,7 @@ func NewCreateServiceUseCase(serviceRepository repository.ServiceRepository) *Cr
 	return &CreateServiceUseCase{serviceRepository: serviceRepository}
 }
 
-func (c *CreateServiceUseCase) Execute(ctx context.Context, input dto.CreateServiceInput) (*CreateServiceOutputDTO, error) {
+func (c *CreateServiceUseCase) Execute(ctx context.Context, input CreateServiceInputDTO) (*CreateServiceOutputDTO, error) {
 	establishmentData, err := getEstablishmentData(ctx)
 	if err != nil {
 		return nil, err

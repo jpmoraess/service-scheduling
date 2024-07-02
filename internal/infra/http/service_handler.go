@@ -2,7 +2,6 @@ package http
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/jpmoraess/service-scheduling/internal/application/dto"
 	"github.com/jpmoraess/service-scheduling/internal/application/usecase"
 )
 
@@ -22,7 +21,7 @@ func NewServiceHandler(
 }
 
 func (h *ServiceHandler) HandleCreateService(c *fiber.Ctx) error {
-	var input dto.CreateServiceInput
+	var input usecase.CreateServiceInputDTO
 	if err := c.BodyParser(&input); err != nil {
 		return err
 	}

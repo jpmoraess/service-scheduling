@@ -102,7 +102,7 @@ func (c *CustomerMongoRepository) Find(ctx context.Context, establishmentID stri
 	if err := cur.All(ctx, &customersData); err != nil {
 		return nil, fmt.Errorf("failed to decode customer: %w", err)
 	}
-	customers := make([]*entity.Customer, len(customersData))
+	customers := make([]*entity.Customer, 0, len(customersData))
 	for _, customerData := range customersData {
 		customer, err := fromCustomerData(customerData)
 		if err != nil {

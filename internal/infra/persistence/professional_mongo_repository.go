@@ -3,17 +3,25 @@ package persistence
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/jpmoraess/service-scheduling/configs"
 	"github.com/jpmoraess/service-scheduling/internal/domain/entity"
-	"github.com/jpmoraess/service-scheduling/internal/infra/persistence/data"
-	"github.com/jpmoraess/service-scheduling/internal/infra/persistence/mapper"
 	"github.com/jpmoraess/service-scheduling/internal/infra/persistence/util"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
+
+type ProfessionalData struct {
+	ID              primitive.ObjectID `bson:"_id,omitempty"`
+	AccountID       primitive.ObjectID `bson:"accountID"`
+	EstablishmentID primitive.ObjectID `bson:"establishmentID"`
+	Name            string             `bson:"name"`
+	Active          bool               `bson:"active"`
+	CreatedAt       time.Time          `bson:"createdAt"`
+}
 
 type ProfessionalMongoRepository struct {
 	client *mongo.Client
@@ -28,7 +36,7 @@ func NewProfessionalMongoRepository(client *mongo.Client) *ProfessionalMongoRepo
 }
 
 func (p *ProfessionalMongoRepository) Save(ctx context.Context, entity *entity.Professional) (*entity.Professional, error) {
-	professionalData, err := mapper.ToProfessionalData(entity)
+	professionalData, err := toProfessionalData(entity)
 	if err != nil {
 		return nil, err
 	}
@@ -45,11 +53,11 @@ func (p *ProfessionalMongoRepository) Get(ctx context.Context, id string) (*enti
 	if err != nil {
 		return nil, err
 	}
-	var professionalData data.ProfessionalData
+	var professionalData ProfessionalData
 	if err := p.coll.FindOne(ctx, bson.M{"_id": oid}).Decode(&professionalData); err != nil {
 		return nil, err
 	}
-	professional, err := mapper.FromProfessionalData(&professionalData)
+	professional, err := fromProfessionalData(&professionalData)
 	if err != nil {
 		return nil, err
 	}
@@ -69,17 +77,44 @@ func (p *ProfessionalMongoRepository) Find(ctx context.Context, establishmentID 
 		return nil, fmt.Errorf("failed to find professional by establishment id: %w", err)
 	}
 	defer cur.Close(ctx)
-	var professionalsData []data.ProfessionalData
+	var professionalsData []ProfessionalData
 	if err := cur.All(ctx, &professionalsData); err != nil {
 		return nil, fmt.Errorf("failed to decode professional: %w", err)
 	}
 	professionals := make([]*entity.Professional, 0, len(professionalsData))
 	for _, professionalData := range professionalsData {
-		professional, err := mapper.FromProfessionalData(&professionalData)
+		professional, err := fromProfessionalData(&professionalData)
 		if err != nil {
 			return nil, fmt.Errorf("failed to map professionl data to entity: %w", err)
 		}
 		professionals = append(professionals, professional)
 	}
 	return professionals, nil
+}
+
+func toProfessionalData(professional *entity.Professional) (*ProfessionalData, error) {
+	accountID, err := util.GetObjectID(professional.AccountID())
+	if err != nil {
+		return nil, err
+	}
+	establishmentID, err := util.GetObjectID(professional.EstablishmentID())
+	if err != nil {
+		return nil, err
+	}
+	return &ProfessionalData{
+		AccountID:       accountID,
+		EstablishmentID: establishmentID,
+		Name:            professional.Name(),
+		Active:          professional.Active(),
+		CreatedAt:       professional.CreatedAt(),
+	}, nil
+}
+
+func fromProfessionalData(data *ProfessionalData) (*entity.Professional, error) {
+	professional, err := entity.RestoreProfessional(data.ID.Hex(), data.AccountID.Hex(), data.EstablishmentID.Hex(), data.Name, data.CreatedAt)
+	if err != nil {
+		fmt.Println("error to restore professional from database", err)
+		return nil, err
+	}
+	return professional, nil
 }

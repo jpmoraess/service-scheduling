@@ -43,6 +43,7 @@ func RestoreAccount(id string, accountType int, name, email, phoneNumber, encryp
 		email:             email,
 		phoneNumber:       phoneNumber,
 		encryptedPassword: encryptedPassword,
+		createdAt:         createdAt,
 	}, nil
 }
 

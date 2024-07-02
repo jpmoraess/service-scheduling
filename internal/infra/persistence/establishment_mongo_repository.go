@@ -2,16 +2,24 @@ package persistence
 
 import (
 	"context"
+	"fmt"
+	"time"
 
 	"github.com/jpmoraess/service-scheduling/configs"
 	"github.com/jpmoraess/service-scheduling/internal/domain/entity"
-	"github.com/jpmoraess/service-scheduling/internal/infra/persistence/data"
-	"github.com/jpmoraess/service-scheduling/internal/infra/persistence/mapper"
 	"github.com/jpmoraess/service-scheduling/internal/infra/persistence/util"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
+
+type EstablishmentData struct {
+	ID        primitive.ObjectID `bson:"_id,omitempty"`
+	AccountID primitive.ObjectID `bson:"accountID"`
+	Name      string             `bson:"name"`
+	Slug      string             `bson:"slug"`
+	CreatedAt time.Time          `bson:"createdAt"`
+}
 
 type EstablishmentMongoRepository struct {
 	client *mongo.Client
@@ -26,7 +34,7 @@ func NewEstablishmentMongoRepository(client *mongo.Client) *EstablishmentMongoRe
 }
 
 func (e *EstablishmentMongoRepository) Save(ctx context.Context, entity *entity.Establishment) (*entity.Establishment, error) {
-	establishmentData, err := mapper.ToEstablishmentData(entity)
+	establishmentData, err := toEstablishmentData(entity)
 	if err != nil {
 		return nil, err
 	}
@@ -43,11 +51,11 @@ func (e *EstablishmentMongoRepository) Get(ctx context.Context, id string) (*ent
 	if err != nil {
 		return nil, err
 	}
-	var establishmentData data.EstablishmentData
+	var establishmentData EstablishmentData
 	if err := e.coll.FindOne(ctx, bson.M{"_id": oid}).Decode(&establishmentData); err != nil {
 		return nil, err
 	}
-	establishment, err := mapper.FromEstablishmentData(&establishmentData)
+	establishment, err := fromEstablishmentData(&establishmentData)
 	if err != nil {
 		return nil, err
 	}
@@ -55,11 +63,11 @@ func (e *EstablishmentMongoRepository) Get(ctx context.Context, id string) (*ent
 }
 
 func (e *EstablishmentMongoRepository) GetBySlug(ctx context.Context, slug string) (*entity.Establishment, error) {
-	var establishmentData data.EstablishmentData
+	var establishmentData EstablishmentData
 	if err := e.coll.FindOne(ctx, bson.M{"slug": slug}).Decode(&establishmentData); err != nil {
 		return nil, err
 	}
-	establishment, err := mapper.FromEstablishmentData(&establishmentData)
+	establishment, err := fromEstablishmentData(&establishmentData)
 	if err != nil {
 		return nil, err
 	}
@@ -71,12 +79,34 @@ func (e *EstablishmentMongoRepository) GetByAccountID(ctx context.Context, accou
 	if err != nil {
 		return nil, err
 	}
-	var establishmentData data.EstablishmentData
+	var establishmentData EstablishmentData
 	if err := e.coll.FindOne(ctx, bson.M{"accountID": oid}).Decode(&establishmentData); err != nil {
 		return nil, err
 	}
-	establishment, err := mapper.FromEstablishmentData(&establishmentData)
+	establishment, err := fromEstablishmentData(&establishmentData)
 	if err != nil {
+		return nil, err
+	}
+	return establishment, nil
+}
+
+func toEstablishmentData(entity *entity.Establishment) (*EstablishmentData, error) {
+	accountID, err := util.GetObjectID(entity.AccountID())
+	if err != nil {
+		return nil, err
+	}
+	return &EstablishmentData{
+		AccountID: accountID,
+		Name:      entity.Name(),
+		Slug:      entity.Slug(),
+		CreatedAt: entity.CreatedAt(),
+	}, nil
+}
+
+func fromEstablishmentData(data *EstablishmentData) (*entity.Establishment, error) {
+	establishment, err := entity.RestoreEstablishment(data.ID.Hex(), data.AccountID.Hex(), data.Name, data.Slug, data.CreatedAt)
+	if err != nil {
+		fmt.Println("error to restore establishment from database", err)
 		return nil, err
 	}
 	return establishment, nil

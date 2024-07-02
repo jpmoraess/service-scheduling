@@ -1,10 +1,7 @@
 package entity
 
 import (
-	"fmt"
 	"time"
-
-	"github.com/jpmoraess/service-scheduling/internal/domain/vo"
 )
 
 type Professional struct {
@@ -12,60 +9,49 @@ type Professional struct {
 	accountID       string
 	establishmentID string
 	name            string
-	workPlan        *vo.WorkPlan
 	active          bool
 	createdAt       time.Time
 }
 
 func NewProfessional(accountID, establishmentID, name string) (*Professional, error) {
-	workPlan, err := vo.DefaultWorkPlan()
-	if err != nil {
-		return nil, err
-	}
 	return &Professional{
 		accountID:       accountID,
 		establishmentID: establishmentID,
 		name:            name,
-		workPlan:        workPlan,
 		active:          true,
 		createdAt:       time.Now(),
 	}, nil
 }
 
-func RestoreProfessional(id, accountID, establishmentID, name string, workPlan *vo.WorkPlan, createdAt time.Time) (*Professional, error) {
+func RestoreProfessional(id, accountID, establishmentID, name string, createdAt time.Time) (*Professional, error) {
 	return &Professional{
 		id:              id,
 		accountID:       accountID,
 		establishmentID: establishmentID,
 		name:            name,
-		workPlan:        workPlan,
 		active:          true,
 		createdAt:       createdAt,
 	}, nil
 }
 
-func (p *Professional) CanScheduleAtTheSpecifiedDateAndTime(date, time time.Time) error {
-	day := p.WorkPlan().GetDayFromWorkPlan(date)
-	if day == nil {
-		return fmt.Errorf("professional does not work on the chosen day")
-	}
-
-	// TODO: verify professional's break
-
-	// check if the time is within range
-	if day.StartTime().Before(day.EndTime()) {
-		if (time.Equal(day.StartTime()) || time.After(day.StartTime())) && (time.Equal(day.EndTime()) || time.Before(day.EndTime())) {
-			return nil
-		}
-	} else {
-		// case where the interval crosses midnight
-		if time.Equal(day.StartTime()) || time.After(day.StartTime()) || time.Equal(day.EndTime()) || time.Before(day.EndTime()) {
-			return nil
-		}
-	}
-
-	return fmt.Errorf("hours outside the professional's scheduling range")
-}
+//func (p *Professional) CanScheduleAtTheSpecifiedDateAndTime(date, time time.Time) error {
+//	day := p.WorkPlan().GetDayFromWorkPlan(date)
+//	if day == nil {
+//		return fmt.Errorf("professional does not work on the chosen day")
+//	}
+//
+//	if day.StartTime().Before(day.EndTime()) {
+//		if (time.Equal(day.StartTime()) || time.After(day.StartTime())) && (time.Equal(day.EndTime()) || time.Before(day.EndTime())) {
+//			return nil
+//		}
+//	} else {
+//		if time.Equal(day.StartTime()) || time.After(day.StartTime()) || time.Equal(day.EndTime()) || time.Before(day.EndTime()) {
+//			return nil
+//		}
+//	}
+//
+//	return fmt.Errorf("hours outside the professional's scheduling range")
+//}
 
 func (p *Professional) SetID(id string) {
 	p.id = id
@@ -85,10 +71,6 @@ func (p *Professional) EstablishmentID() string {
 
 func (p *Professional) Name() string {
 	return p.name
-}
-
-func (p *Professional) WorkPlan() *vo.WorkPlan {
-	return p.workPlan
 }
 
 func (p *Professional) Active() bool {
